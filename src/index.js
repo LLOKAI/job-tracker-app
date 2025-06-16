@@ -6,6 +6,8 @@ const jobsRouter = require('./routes/jobs');
 const prisma = new PrismaClient();
 const app = express();
 
+const errorHandler = require('./middleware/errorHandler');
+
 app.use(cors());
 app.use(express.json());
 
@@ -14,6 +16,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/jobs', jobsRouter);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

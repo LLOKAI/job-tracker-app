@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
   const parse = jobSchema.safeParse(req.body);
 
   if (!parse.success) {
-    return res.status(400).json({ error: 'Validation error', details: parse.error.errors });
+    throw parse.error; // This will be caught by the error handler middleware
   }
 
   const data = parse.data;
@@ -54,8 +54,7 @@ router.post('/', async (req, res) => {
 
     res.status(201).json(job);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error while creating job.' });
+    throw new Error('Server error while creating job.');
   }
 });
 

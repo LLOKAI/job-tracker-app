@@ -58,6 +58,45 @@ router.post('/', async (req, res) => {
   }
 });
 
+// PUT /api/jobs/:id
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const parse = jobSchema.safeParse(req.body);
+
+  if (!parse.success) {
+    throw parse.error;
+  }
+
+  try {
+    // Check if job exists
+    const existing = await prisma.jobApplication.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    const data = parse.data;
+
+    const updatedJob = await prisma.jobApplication.update({
+      where: { id },
+      data: {
+        company: data.company,
+        position: data.position,
+        status: data.status || 'APPLIED',
+        appliedDate: data.appliedDate ? new Date(data.appliedDate) : new Date(),
+        location: data.location,
+        tags: data.tags || [],
+        notes: data.notes,
+        url: data.url
+      }
+    });
+
+    res.json(updatedJob);
+  } catch (err) {
+    throw new Error('Failed to update job application.');
+  }
+});
+
+
 
 
 module.exports = router;

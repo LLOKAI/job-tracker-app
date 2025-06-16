@@ -20,11 +20,34 @@ const jobSchema = z.object({
 
 // GET /api/jobs
 router.get('/', async (req, res) => {
+  const { q, status, sort } = req.query;
+
+  const where = {
+    ...(q && {
+      OR: [
+        { company: { contains: q, mode: 'insensitive' } },
+        { position: { contains: q, mode: 'insensitive' } },
+      ],
+    }),
+    ...(status && { status }),
+  };
+
+  const orderBy = sort
+    ? (() => {
+        const [field, direction] = sort.split('_');
+        return { [field]: direction };
+      })()
+    : { appliedDate: 'desc' };
+
   try {
-    const jobs = await prisma.jobApplication.findMany();
+    const jobs = await prisma.jobApplication.findMany({
+      where,
+      orderBy,
+    });
+
     res.json(jobs);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch jobs.' });
+    throw new Error('Failed to fetch jobs');
   }
 });
 

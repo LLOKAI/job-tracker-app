@@ -96,6 +96,26 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// DELETE /api/jobs/:id
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  // Check if job exists
+  const existing = await prisma.jobApplication.findUnique({ where: { id } });
+  if (!existing) {
+    return res.status(404).json({ error: 'Job not found' });
+  }
+
+  try {
+    await prisma.jobApplication.delete({ where: { id } });
+    // 204 No Content on successful deletion
+    res.status(204).send();
+  } catch (err) {
+    throw new Error('Failed to delete job application.');
+  }
+});
+
+
 
 
 

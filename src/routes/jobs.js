@@ -2,6 +2,21 @@ const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { z } = require('zod');
+
+// Define the schema for job applications using Zod
+// This schema will be used for validation of incoming job application data
+const jobSchema = z.object({
+  company: z.string().min(1),
+  position: z.string().min(1),
+  status: z.enum(['APPLIED', 'INTERVIEW', 'REJECTED', 'OFFER']).optional(),
+  appliedDate: z.string().optional(),
+  location: z.string().min(1),
+  tags: z.array(z.string()).optional(),
+  notes: z.string().optional(),
+  url: z.string().url().optional()
+});
+
 
 // GET /api/jobs
 router.get('/', async (req, res) => {
@@ -15,41 +30,35 @@ router.get('/', async (req, res) => {
 
 // POST /api/jobs
 router.post('/', async (req, res) => {
-  const {
-    company,
-    position,
-    status,
-    appliedDate,
-    location,
-    tags,
-    notes,
-    url
-  } = req.body;
+  const parse = jobSchema.safeParse(req.body);
 
-  // Basic validation
-  if (!company || !position || !status || !appliedDate || !location) {
-    return res.status(400).json({ error: 'Missing required fields.' });
+  if (!parse.success) {
+    return res.status(400).json({ error: 'Validation error', details: parse.error.errors });
   }
+
+  const data = parse.data;
 
   try {
     const job = await prisma.jobApplication.create({
       data: {
-        company,
-        position,
-        status, // Must be one of the enum values: APPLIED, INTERVIEW, REJECTED, OFFER
-        appliedDate: new Date(appliedDate),
-        location,
-        tags,
-        notes,
-        url
+        company: data.company,
+        position: data.position,
+        status: data.status || 'APPLIED', // Default value
+        appliedDate: data.appliedDate ? new Date(data.appliedDate) : new Date(),
+        location: data.location,
+        tags: data.tags || [],
+        notes: data.notes,
+        url: data.url
       }
     });
+
     res.status(201).json(job);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to create job application.' });
+    res.status(500).json({ error: 'Server error while creating job.' });
   }
 });
+
 
 
 module.exports = router;

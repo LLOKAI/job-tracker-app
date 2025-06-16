@@ -20,7 +20,7 @@ const jobSchema = z.object({
 
 // GET /api/jobs
 router.get('/', async (req, res) => {
-  const { q, status, sort } = req.query;
+  const { q, status, sort, page = 1, limit = 10 } = req.query;
 
   const where = {
     ...(q && {
@@ -39,17 +39,34 @@ router.get('/', async (req, res) => {
       })()
     : { appliedDate: 'desc' };
 
-  try {
-    const jobs = await prisma.jobApplication.findMany({
-      where,
-      orderBy,
-    });
+  const skip = (Number(page) - 1) * Number(limit);
+  const take = Number(limit);
 
-    res.json(jobs);
+  try {
+    const [jobs, total] = await Promise.all([
+      prisma.jobApplication.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+      }),
+      prisma.jobApplication.count({ where }),
+    ]);
+
+    res.json({
+      data: jobs,
+      meta: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        pages: Math.ceil(total / limit),
+      },
+    });
   } catch (err) {
-    throw new Error('Failed to fetch jobs');
+    throw new Error('Failed to fetch paginated jobs');
   }
 });
+
 
 // POST /api/jobs
 router.post('/', async (req, res) => {

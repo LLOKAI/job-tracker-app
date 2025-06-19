@@ -3,12 +3,13 @@
 
 import React from 'react';
 import Layout from '../components/Layout';
+import JobList from '../components/JobList';
 
 export default function Dashboard() {
   return (
     <Layout>
       <h1>Dashboard</h1>
-      <p>Welcome to your job application tracker!</p>
+      <JobList />
     </Layout>
   );
 }

@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Header from './Header';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Layout({ children }) {
-  const [active, setActive] = useState('Dashboard');
+  const links = [
+    { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Settings', path: '/settings' }
+  ];
 
-  const links = ['Dashboard', 'Settings'];
+  const location = useLocation();
+  const activePath = location.pathname;
 
   return (
     <div style={{
@@ -27,27 +32,32 @@ export default function Layout({ children }) {
         <nav>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             {links.map(link => (
-              <li
-                key={link}
-                onClick={() => setActive(link)}
-                style={{
-                  padding: '0.6rem 1rem',
-                  borderRadius: '4px',
-                  backgroundColor: active === link ? '#3b82f6' : 'transparent',
-                  cursor: 'pointer',
-                  userSelect: 'none',
-                  fontWeight: active === link ? '600' : '400',
-                  transition: 'background-color 0.3s ease',
-                  marginBottom: '0.5rem',
-                }}
-                onMouseEnter={e => {
-                  if (active !== link) e.currentTarget.style.backgroundColor = '#334155';
-                }}
-                onMouseLeave={e => {
-                  if (active !== link) e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-              >
-                {link}
+              <li key={link.name} style={{ marginBottom: '0.5rem' }}>
+                <Link
+                  to={link.path}
+                  style={{
+                    display: 'block',
+                    padding: '0.6rem 1rem',
+                    borderRadius: '4px',
+                    backgroundColor: activePath === link.path ? '#3b82f6' : 'transparent',
+                    color: '#fff',
+                    fontWeight: activePath === link.path ? '600' : '400',
+                    textDecoration: 'none',
+                    transition: 'background-color 0.3s ease',
+                  }}
+                  onMouseEnter={e => {
+                    if (activePath !== link.path) {
+                      e.currentTarget.style.backgroundColor = '#334155';
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (activePath !== link.path) {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }
+                  }}
+                >
+                  {link.name}
+                </Link>
               </li>
             ))}
           </ul>

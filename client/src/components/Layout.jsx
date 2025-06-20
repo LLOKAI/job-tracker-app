@@ -5,7 +5,9 @@ import { Link, useLocation } from 'react-router-dom';
 export default function Layout({ children }) {
   const links = [
     { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Settings', path: '/settings' }
+    { name: 'Settings', path: '/settings' },
+    { name: 'Add Job', path: '/jobs/new' }
+    
   ];
 
   const location = useLocation();

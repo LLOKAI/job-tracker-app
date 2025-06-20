@@ -1,9 +1,11 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
+import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
-import Layout from './components/Layout';
 
-function App() {
+export default function App() {
   return (
     <Router>
       <Layout>
@@ -11,10 +13,9 @@ function App() {
           <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
+          {/* Add more routes here later */}
         </Routes>
       </Layout>
     </Router>
   );
 }
-
-export default App;

@@ -7,9 +7,9 @@ import JobList from '../components/JobList';
 
 export default function Dashboard() {
   return (
-    <Layout>
-      <h1>Dashboard</h1>
+    <>
+      <h1 style={{ marginBottom: '1.5rem' }}>Dashboard</h1>
       <JobList />
-    </Layout>
+    </>
   );
 }

@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const statusColors = {
-  APPLIED: { bg: "#DBEAFE", text: "#1E40AF" },     // light blue bg, darker blue text
-  INTERVIEW: { bg: "#FEF3C7", text: "#92400E" },   // light yellow bg, darker yellow text
-  REJECTED: { bg: "#FEE2E2", text: "#991B1B" },    // light red bg, darker red text
-  OFFER: { bg: "#DCFCE7", text: "#166534" },       // light green bg, darker green text
+  APPLIED: { bg: 'var(--status-bg-applied)', text: 'var(--status-text-applied)' },
+  INTERVIEW: { bg: 'var(--status-bg-interview)', text: 'var(--status-text-interview)' },
+  REJECTED: { bg: 'var(--status-bg-rejected)', text: 'var(--status-text-rejected)' },
+  OFFER: { bg: 'var(--status-bg-offer)', text: 'var(--status-text-offer)' },
 };
-
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
@@ -22,7 +21,7 @@ const JobList = () => {
           throw new Error(`HTTP error! Status: ${res.status}`);
         }
         const data = await res.json();
-        setJobs(data.data || []); // Adjust if your backend nests jobs under data
+        setJobs(data.data || []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -45,9 +44,9 @@ const JobList = () => {
           <li
             key={job.id}
             style={{
-              background: "#fff",
+              background: 'var(--card-bg)',
               borderRadius: "8px",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              boxShadow: `0 2px 8px var(--card-shadow)`,
               padding: "1rem",
               marginBottom: "1rem",
               display: "flex",
@@ -57,45 +56,43 @@ const JobList = () => {
           >
             <div>
               <strong style={{ fontSize: "1.1rem" }}>{job.position}</strong> at {job.company}
-              <div style={{ color: "#555", marginTop: "0.3rem" }}>{job.location}</div>
+              <div style={{ fontSize: "0.9rem", marginTop: "0.3rem" }}>
+                {job.location}
+              </div>
             </div>
-
             <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
               <span
                 style={{
-                  padding: "0.3rem 0.8rem",
+                  backgroundColor: statusColors[job.status]?.bg || 'gray',
+                  color: statusColors[job.status]?.text || '#fff',
+                  padding: "0.25rem 0.75rem",
                   borderRadius: "12px",
                   fontWeight: "600",
                   fontSize: "0.85rem",
-                  color: statusColors[job.status]?.text || "#333",
-                  backgroundColor: statusColors[job.status]?.bg || "#eee",
-                  whiteSpace: "nowrap",
+                  textTransform: "capitalize",
                 }}
               >
                 {job.status}
               </span>
-
-
-              {/* Add Edit Link here */}
               <Link
                 to={`/jobs/${job.id}/edit`}
                 style={{
-                  display: 'inline-block',
+                  backgroundColor: 'var(--button-bg)',
+                  color: 'var(--button-text)',
                   padding: '0.4rem 0.8rem',
-                  backgroundColor: '#3b82f6',
-                  color: '#fff',
-                  fontWeight: '600',
-                  borderRadius: '4px',
+                  borderRadius: '6px',
                   textDecoration: 'none',
+                  fontWeight: '600',
+                  fontSize: '0.85rem',
+                  border: '1px solid transparent',
                   cursor: 'pointer',
-                  transition: 'background-color 0.3s ease',
+                  userSelect: 'none',
                 }}
-                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#2563eb'} // a bit darker on hover
-                onMouseLeave={e => e.currentTarget.style.backgroundColor = '#3b82f6'}
+                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--button-text)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = 'transparent'}
               >
                 Edit
               </Link>
-
             </div>
           </li>
         ))}

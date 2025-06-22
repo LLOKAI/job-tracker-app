@@ -1,17 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { ThemeContext } from "../ThemeContext";
 
-const inputStyle = {
+const getFormContainerStyle = (darkMode) => ({
+  background: darkMode ? "#1e293b" : "#ffffff",
+  padding: "2rem",
+  borderRadius: "8px",
+  boxShadow: darkMode ? "0 2px 8px rgba(0, 0, 0, 0.7)" : "0 2px 8px rgba(0, 0, 0, 0.1)",
+  maxWidth: "600px",
+  margin: "2rem auto",
+});
+
+const getInputStyle = (darkMode) => ({
   padding: "0.6rem 0.8rem",
   borderRadius: "6px",
-  border: "1px solid #cbd5e1",
+  border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
   fontSize: "1rem",
   fontFamily: "inherit",
-};
+  backgroundColor: darkMode ? "#334155" : "#ffffff",
+  color: darkMode ? "#f8fafc" : "#222222",
+});
+
+const getButtonStyle = (submitting, darkMode) => ({
+  padding: "0.75rem 1rem",
+  backgroundColor: submitting 
+    ? (darkMode ? "#1e40af" : "#93c5fd")
+    : "#3b82f6",
+  color: "#ffffff",
+  border: "none",
+  borderRadius: "6px",
+  cursor: submitting ? "not-allowed" : "pointer",
+  fontWeight: "bold",
+});
 
 export default function EditJob() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { darkMode } = useContext(ThemeContext); // Add this line
 
   const [formData, setFormData] = useState({
     company: "",
@@ -61,7 +86,7 @@ export default function EditJob() {
 
     try {
       const res = await fetch(`http://localhost:3000/api/jobs/${id}`, {
-        method: "PUT", // or PATCH if API supports partial updates
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
@@ -76,34 +101,20 @@ export default function EditJob() {
   };
 
   if (loading) return <div>Loading job data...</div>;
-  if (error) return <div style={{ color: "red" }}>Error: {error}</div>;
+  if (error) return <div style={{ color: darkMode ? "#f87171" : "#b91c1c" }}>Error: {error}</div>;
 
   return (
-    <div
-      style={{
-        background: "#fff",
-        padding: "2rem",
-        borderRadius: "8px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-        maxWidth: "600px",
-        margin: "2rem auto",
-      }}
-    >
+    <div style={getFormContainerStyle(darkMode)}>
       <h1 style={{ marginBottom: "1rem" }}>Edit Job</h1>
-      {submitError && (
-        <p style={{ color: "red", marginBottom: "1rem" }}>{submitError}</p>
-      )}
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-      >
+      {submitError && <p style={{ color: darkMode ? "#f87171" : "#b91c1c", marginBottom: "1rem" }}>{submitError}</p>}
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <input
           name="company"
           placeholder="Company"
           value={formData.company}
           onChange={handleChange}
           required
-          style={inputStyle}
+          style={getInputStyle(darkMode)}
         />
         <input
           name="position"
@@ -111,7 +122,7 @@ export default function EditJob() {
           value={formData.position}
           onChange={handleChange}
           required
-          style={inputStyle}
+          style={getInputStyle(darkMode)}
         />
         <input
           name="location"
@@ -119,14 +130,14 @@ export default function EditJob() {
           value={formData.location}
           onChange={handleChange}
           required
-          style={inputStyle}
+          style={getInputStyle(darkMode)}
         />
         <input
           name="url"
           placeholder="Job URL"
           value={formData.url}
           onChange={handleChange}
-          style={inputStyle}
+          style={getInputStyle(darkMode)}
         />
         <textarea
           name="notes"
@@ -134,14 +145,14 @@ export default function EditJob() {
           value={formData.notes}
           onChange={handleChange}
           rows={4}
-          style={{ ...inputStyle, resize: "vertical" }}
+          style={{ ...getInputStyle(darkMode), resize: "vertical" }}
         />
         <select
           name="status"
           value={formData.status}
           onChange={handleChange}
           required
-          style={inputStyle}
+          style={getInputStyle(darkMode)}
         >
           <option value="APPLIED">Applied</option>
           <option value="INTERVIEW">Interview</option>
@@ -149,19 +160,7 @@ export default function EditJob() {
           <option value="OFFER">Offer</option>
         </select>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          style={{
-            padding: "0.75rem 1rem",
-            background: submitting ? "#94a3b8" : "#3b82f6",
-            color: "#fff",
-            border: "none",
-            borderRadius: "6px",
-            cursor: submitting ? "not-allowed" : "pointer",
-            fontWeight: "bold",
-          }}
-        >
+        <button type="submit" disabled={submitting} style={getButtonStyle(submitting, darkMode)}>
           {submitting ? "Saving..." : "Save"}
         </button>
       </form>

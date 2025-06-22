@@ -15,22 +15,26 @@ export default function Layout({ children }) {
   const activePath = location.pathname;
 
   return (
-    <div style={{
-      display: 'flex',
-      minHeight: '100vh',
-      background: darkMode ? '#0f172a' : '#f4f6f8',
-      color: darkMode ? '#f8fafc' : '#222',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      <aside style={{
-        width: '220px',
-        background: darkMode ? '#1e293b' : '#1e293b',
-        color: '#f8fafc',
-        padding: '1.5rem',
+    <div
+      style={{
         display: 'flex',
-        flexDirection: 'column',
-        gap: '1.5rem',
-      }}>
+        minHeight: '100vh',
+        background: 'var(--bg-color)',
+        color: 'var(--text-color)',
+        fontFamily: 'Arial, sans-serif',
+      }}
+    >
+      <aside
+        style={{
+          width: '220px',
+          background: 'var(--sidebar-bg)',
+          color: 'var(--sidebar-text)',
+          padding: '1.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.5rem',
+        }}
+      >
         <h2 style={{ marginBottom: '2rem' }}>Job Tracker</h2>
         <nav>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -42,15 +46,15 @@ export default function Layout({ children }) {
                     display: 'block',
                     padding: '0.6rem 1rem',
                     borderRadius: '4px',
-                    backgroundColor: activePath === link.path ? '#3b82f6' : 'transparent',
-                    color: '#fff',
+                    backgroundColor: activePath === link.path ? 'var(--link-active-bg)' : 'transparent',
+                    color: 'var(--button-text)',
                     fontWeight: activePath === link.path ? '600' : '400',
                     textDecoration: 'none',
                     transition: 'background-color 0.3s ease',
                   }}
                   onMouseEnter={e => {
                     if (activePath !== link.path) {
-                      e.currentTarget.style.backgroundColor = darkMode ? '#334155' : '#334155';
+                      e.currentTarget.style.backgroundColor = 'var(--link-hover-bg)';
                     }
                   }}
                   onMouseLeave={e => {
@@ -67,18 +71,18 @@ export default function Layout({ children }) {
         </nav>
       </aside>
 
-      <main style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        overflowY: 'auto',
-        backgroundColor: darkMode ? '#0f172a' : '#fff',
-        color: darkMode ? '#f8fafc' : '#222',
-      }}>
+      <main
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          overflowY: 'auto',
+          backgroundColor: 'var(--bg-color)',
+          color: 'var(--text-color)',
+        }}
+      >
         <Header />
-        <div style={{ padding: '1rem 2rem', flex: 1 }}>
-          {children}
-        </div>
+        <div style={{ padding: '1rem 2rem', flex: 1 }}>{children}</div>
       </main>
     </div>
   );

@@ -1,30 +1,78 @@
 :root {
-  /* Light theme colors */
+  /* Light theme */
   --bg-color: #f4f6f8;
-  --text-color: #222;
+  --text-color: #222222;
   --sidebar-bg: #1e293b;
   --sidebar-text: #f8fafc;
   --link-active-bg: #3b82f6;
-  --header-bg: #fff;
+  --link-hover-bg: #334155;
+  --header-bg: #ffffff;
   --header-text: #334155;
   --button-bg: #3b82f6;
-  --button-text: #fff;
+  --button-hover-bg: #2563eb;
+  --button-text: #ffffff;
+  --card-bg: #ffffff;
+  --card-shadow: rgba(0, 0, 0, 0.1);
+  --input-border: #cbd5e1;
+  --input-bg: #ffffff;
+  --input-text: #222222;
+  --error-color: #b91c1c;
+  --status-bg-applied: #e0f2fe;     /* Light blue */
+  --status-text-applied: #0284c7;   /* Dark blue */
+
+  --status-bg-interview: #e0ffe0;   /* Light green */
+  --status-text-interview: #15803d; /* Dark green */
+
+  --status-bg-rejected: #fee2e2;    /* Light red */
+  --status-text-rejected: #b91c1c;  /* Dark red */
+
+  --status-bg-offer: #fef3c7;       /* Light yellow */
+  --status-text-offer: #b45309;     /* Dark yellow */
+  --form-bg: var(--card-bg);
+  --form-shadow: var(--card-shadow);
+  --button-bg-disabled: #93c5fd; /* lighter blue for disabled state */
+
+  
 }
 
 [data-theme="dark"] {
-  /* Dark theme colors */
+  /* Dark theme */
   --bg-color: #0f172a;
   --text-color: #f8fafc;
   --sidebar-bg: #1e293b;
   --sidebar-text: #f8fafc;
   --link-active-bg: #3b82f6;
+  --link-hover-bg: #334155;
   --header-bg: #1e293b;
   --header-text: #f8fafc;
   --button-bg: #3b82f6;
-  --button-text: #fff;
+  --button-hover-bg: #2563eb;
+  --button-text: #ffffff;
+  --card-bg: #1e293b;
+  --card-shadow: rgba(0, 0, 0, 0.7);
+  --input-border: #475569;
+  --input-bg: #334155;
+  --input-text: #f8fafc;
+  --error-color: #f87171;
+  --status-bg-applied: #0369a1;     /* Darker blue */
+  --status-text-applied: #bae6fd;   /* Lighter blue */
+
+  --status-bg-interview: #14532d;   /* Darker green */
+  --status-text-interview: #bbf7d0; /* Lighter green */
+
+  --status-bg-rejected: #991b1b;    /* Dark red */
+  --status-text-rejected: #fecaca;  /* Light red */
+
+  --status-bg-offer: #78350f;       /* Dark yellow */
+  --status-text-offer: #fde68a;     /* Light yellow */
+  --form-bg: var(--card-bg);
+  --form-shadow: var(--card-shadow);
+  --button-bg-disabled: #1e40af; /* dark muted blue for disabled button */
+
 }
 
 body {
+  margin: 0;
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family: Arial, sans-serif;

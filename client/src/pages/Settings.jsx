@@ -98,15 +98,6 @@ export default function Settings() {
             <option value="status">Status</option>
           </select>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <input
-            type="checkbox"
-            checked={notifications}
-            onChange={e => setNotifications(e.target.checked)}
-            id="notifications"
-          />
-          <label htmlFor="notifications" style={{ fontWeight: 500 }}>Enable Notifications</label>
-        </div>
         <div>
           <label style={{ fontWeight: 500 }}>Font Size</label>
           <select
@@ -118,6 +109,15 @@ export default function Settings() {
             <option value="medium">Medium</option>
             <option value="large">Large</option>
           </select>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <input
+            type="checkbox"
+            checked={notifications}
+            onChange={e => setNotifications(e.target.checked)}
+            id="notifications"
+          />
+          <label htmlFor="notifications" style={{ fontWeight: 500 }}>Enable Notifications</label>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <input

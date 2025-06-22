@@ -26,7 +26,7 @@ export default function Layout({ children }) {
     >
       <aside
         style={{
-          width: '220px',
+          width: '180px',
           background: 'var(--sidebar-bg)',
           color: 'var(--sidebar-text)',
           padding: '1.5rem',

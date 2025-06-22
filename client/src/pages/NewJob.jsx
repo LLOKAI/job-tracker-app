@@ -35,14 +35,21 @@ const getButtonStyle = (submitting, darkMode) => ({
 
 export default function NewJob() {
   const navigate = useNavigate();
-  const { darkMode } = useContext(ThemeContext); // Add this line
+  const { darkMode } = useContext(ThemeContext);
+
+  // Get defaults from localStorage
+  const defaultStatus = localStorage.getItem('settings_defaultStatus') || 'APPLIED';
+  const today = new Date().toISOString().slice(0, 10);
+
   const [formData, setFormData] = useState({
     company: "",
     position: "",
     location: "",
     url: "",
     notes: "",
-    status: localStorage.getItem('settings_defaultStatus') || 'APPLIED', // <-- use default
+    tags: "",
+    status: defaultStatus,
+    appliedDate: today,
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -56,11 +63,22 @@ export default function NewJob() {
     setSubmitting(true);
     setError("");
 
+    // Prepare tags as array, trim whitespace, filter empty
+    const tagsArray = formData.tags
+      ? formData.tags.split(",").map(t => t.trim()).filter(Boolean)
+      : [];
+
+    const payload = {
+      ...formData,
+      tags: tagsArray,
+      appliedDate: formData.appliedDate || today,
+    };
+
     try {
       const res = await fetch("http://localhost:3000/api/jobs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) throw new Error("Failed to create job");
@@ -116,6 +134,33 @@ export default function NewJob() {
           onChange={handleChange}
           rows={4}
           style={{ ...getInputStyle(darkMode), resize: "vertical" }}
+        />
+        <input
+          name="tags"
+          placeholder="Tags (comma separated)"
+          value={formData.tags}
+          onChange={handleChange}
+          style={getInputStyle(darkMode)}
+        />
+        <select
+          name="status"
+          value={formData.status}
+          onChange={handleChange}
+          required
+          style={getInputStyle(darkMode)}
+        >
+          <option value="APPLIED">Applied</option>
+          <option value="INTERVIEW">Interview</option>
+          <option value="REJECTED">Rejected</option>
+          <option value="OFFER">Offer</option>
+        </select>
+        <input
+          type="date"
+          name="appliedDate"
+          value={formData.appliedDate}
+          onChange={handleChange}
+          style={getInputStyle(darkMode)}
+          max={today}
         />
         <button type="submit" disabled={submitting} style={getButtonStyle(submitting, darkMode)}>
           {submitting ? "Submitting..." : "Submit"}

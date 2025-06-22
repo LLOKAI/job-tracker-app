@@ -42,6 +42,7 @@ export default function NewJob() {
     location: "",
     url: "",
     notes: "",
+    status: localStorage.getItem('settings_defaultStatus') || 'APPLIED', // <-- use default
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");

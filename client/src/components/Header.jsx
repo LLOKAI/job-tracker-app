@@ -1,11 +1,13 @@
 import React, { useContext } from 'react';
 import { ThemeContext } from '../ThemeContext';
+import { UserContext } from '../UserContext';
 
 import { MdOutlineDarkMode } from "react-icons/md";
 import { MdOutlineLightMode } from "react-icons/md";
 
 export default function Header() {
   const { darkMode, setDarkMode } = useContext(ThemeContext);
+  const { name } = useContext(UserContext);
 
   return (
     <header
@@ -40,7 +42,7 @@ export default function Header() {
         >
           {darkMode ? <MdOutlineDarkMode color='#ffffff' /> : <MdOutlineLightMode color='#000000' />}
         </button>
-        <div style={{ fontWeight: 500 }}>Hello, Liam</div>
+        <div style={{ fontWeight: 500 }}>Hello, {name}</div>
         <button
           style={{
             backgroundColor: 'var(--button-bg)',
@@ -50,6 +52,7 @@ export default function Header() {
             borderRadius: '4px',
             cursor: 'pointer',
             fontWeight: '600',
+            fontSize: 'var(--font-size-base)', // <-- update here
           }}
           onClick={() => alert('Logout clicked!')}
         >

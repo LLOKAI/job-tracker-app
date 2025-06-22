@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
+import { ThemeContext } from "../ThemeContext"; // Add this import
 
 const statusColors = {
   APPLIED: { bg: 'var(--status-bg-applied)', text: 'var(--status-text-applied)' },
@@ -8,15 +9,40 @@ const statusColors = {
   OFFER: { bg: 'var(--status-bg-offer)', text: 'var(--status-text-offer)' },
 };
 
+const sortOptions = [
+  { value: "date", label: "Date" },
+  { value: "company", label: "Company" },
+  { value: "status", label: "Status" },
+];
+
+const sortToApi = {
+  date: "appliedDate_desc",
+  company: "company_asc",
+  status: "status_asc",
+};
+
+const getSelectStyle = (darkMode) => ({
+  padding: "0.6rem 0.8rem",
+  borderRadius: "6px",
+  border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
+  fontSize: "1rem",
+  fontFamily: "inherit",
+  backgroundColor: darkMode ? "#334155" : "#ffffff",
+  color: darkMode ? "#f8fafc" : "#222222",
+});
+
 const JobList = () => {
+  const { darkMode } = useContext(ThemeContext); // Use ThemeContext
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sort, setSort] = useState(() => localStorage.getItem('settings_defaultSort') || 'date');
 
   useEffect(() => {
     const fetchJobs = async () => {
+      setLoading(true);
       try {
-        const res = await fetch("http://localhost:3000/api/jobs");
+        const res = await fetch(`http://localhost:3000/api/jobs?sort=${sortToApi[sort]}`);
         if (!res.ok) {
           throw new Error(`HTTP error! Status: ${res.status}`);
         }
@@ -30,7 +56,12 @@ const JobList = () => {
     };
 
     fetchJobs();
-  }, []);
+  }, [sort]);
+
+  const handleSortChange = (e) => {
+    setSort(e.target.value);
+    // Do NOT update localStorage here!
+  };
 
   if (loading) return <div>Loading jobs...</div>;
   if (error) return <div>Error loading jobs: {error}</div>;
@@ -38,7 +69,18 @@ const JobList = () => {
 
   return (
     <div>
-      <h2 style={{ marginBottom: "1rem", fontSize: "1.5rem" }}>Job Applications</h2>
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
+        <h2 style={{ fontSize: "1.5rem", margin: 0 }}>Job Applications</h2>
+        <select
+          value={sort}
+          onChange={handleSortChange}
+          style={getSelectStyle(darkMode)}
+        >
+          {sortOptions.map(opt => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+      </div>
       <ul style={{ listStyle: "none", padding: 0 }}>
         {jobs.map((job) => (
           <li

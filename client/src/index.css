@@ -1,12 +1,31 @@
-/* Basic reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root {
+  /* Light theme colors */
+  --bg-color: #f4f6f8;
+  --text-color: #222;
+  --sidebar-bg: #1e293b;
+  --sidebar-text: #f8fafc;
+  --link-active-bg: #3b82f6;
+  --header-bg: #fff;
+  --header-text: #334155;
+  --button-bg: #3b82f6;
+  --button-text: #fff;
+}
+
+[data-theme="dark"] {
+  /* Dark theme colors */
+  --bg-color: #0f172a;
+  --text-color: #f8fafc;
+  --sidebar-bg: #1e293b;
+  --sidebar-text: #f8fafc;
+  --link-active-bg: #3b82f6;
+  --header-bg: #1e293b;
+  --header-text: #f8fafc;
+  --button-bg: #3b82f6;
+  --button-text: #fff;
 }
 
 body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
   font-family: Arial, sans-serif;
-  background-color: #f2f2f2;
-  color: #222;
 }

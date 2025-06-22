@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Header from './Header';
 import { Link, useLocation } from 'react-router-dom';
+import { ThemeContext } from '../ThemeContext';
 
 export default function Layout({ children }) {
+  const { darkMode } = useContext(ThemeContext);
   const links = [
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Settings', path: '/settings' },
     { name: 'Add Job', path: '/jobs/new' }
-    
   ];
 
   const location = useLocation();
@@ -17,13 +18,13 @@ export default function Layout({ children }) {
     <div style={{
       display: 'flex',
       minHeight: '100vh',
-      background: '#f4f6f8',
+      background: darkMode ? '#0f172a' : '#f4f6f8',
+      color: darkMode ? '#f8fafc' : '#222',
       fontFamily: 'Arial, sans-serif'
     }}>
-      {/* Sidebar */}
       <aside style={{
         width: '220px',
-        background: '#1e293b',
+        background: darkMode ? '#1e293b' : '#1e293b',
         color: '#f8fafc',
         padding: '1.5rem',
         display: 'flex',
@@ -49,7 +50,7 @@ export default function Layout({ children }) {
                   }}
                   onMouseEnter={e => {
                     if (activePath !== link.path) {
-                      e.currentTarget.style.backgroundColor = '#334155';
+                      e.currentTarget.style.backgroundColor = darkMode ? '#334155' : '#334155';
                     }
                   }}
                   onMouseLeave={e => {
@@ -66,12 +67,13 @@ export default function Layout({ children }) {
         </nav>
       </aside>
 
-      {/* Main content */}
       <main style={{
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
         overflowY: 'auto',
+        backgroundColor: darkMode ? '#0f172a' : '#fff',
+        color: darkMode ? '#f8fafc' : '#222',
       }}>
         <Header />
         <div style={{ padding: '1rem 2rem', flex: 1 }}>

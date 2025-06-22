@@ -9,6 +9,11 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     localStorage.setItem('darkMode', darkMode);
+    if (darkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
   }, [darkMode]);
 
   return (

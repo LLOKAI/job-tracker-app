@@ -1,25 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
+import { ThemeContext } from '../ThemeContext';
 
 export default function Settings() {
-  const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem('darkMode') === 'true';
-  });
-
-  useEffect(() => {
-    if (darkMode) {
-      document.body.style.backgroundColor = '#1e293b';
-      document.body.style.color = '#f8fafc';
-    } else {
-      document.body.style.backgroundColor = '';
-      document.body.style.color = '';
-    }
-    localStorage.setItem('darkMode', darkMode);
-  }, [darkMode]);
+  const { darkMode, setDarkMode } = useContext(ThemeContext);
 
   return (
-    <div style={{ maxWidth: 600, margin: '2rem auto', background: '#fff', padding: '2rem', borderRadius: '8px' }}>
+    <div style={{
+      maxWidth: 600,
+      margin: '2rem auto',
+      background: darkMode ? '#1e293b' : '#fff',
+      padding: '2rem',
+      borderRadius: '8px',
+      color: darkMode ? '#f8fafc' : '#222',
+    }}>
       <h1>Settings</h1>
-      <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
         <input
           type="checkbox"
           checked={darkMode}

@@ -27,6 +27,7 @@ router.get('/', async (req, res) => {
       OR: [
         { company: { contains: q, mode: 'insensitive' } },
         { position: { contains: q, mode: 'insensitive' } },
+        { tags: { has: q } }, // <-- Add this line to search tags
       ],
     }),
     ...(status && { status }),

@@ -1,22 +1,49 @@
 import React, { useContext, useState } from 'react';
 import { ThemeContext } from '../ThemeContext';
+import { UserContext } from '../UserContext';
 
 export default function Settings() {
   const { darkMode, setDarkMode } = useContext(ThemeContext);
+  const { name, setName } = useContext(UserContext);
 
-  // Example state for personal info (not persisted yet)
-  const [name, setName] = useState('Liam');
-  const [email, setEmail] = useState('');
-  const [defaultStatus, setDefaultStatus] = useState('APPLIED');
-  const [defaultSort, setDefaultSort] = useState('date');
-  const [notifications, setNotifications] = useState(false);
-  const [fontSize, setFontSize] = useState('medium');
-  const [compactMode, setCompactMode] = useState(false);
+  // Load from localStorage or use default
+  const [email, setEmail] = useState(() => localStorage.getItem('settings_email') || '');
+  const [defaultStatus, setDefaultStatus] = useState(() => localStorage.getItem('settings_defaultStatus') || 'APPLIED');
+  const [defaultSort, setDefaultSort] = useState(() => localStorage.getItem('settings_defaultSort') || 'date');
+  const [notifications, setNotifications] = useState(() => {
+    const stored = localStorage.getItem('settings_notifications');
+    return stored ? JSON.parse(stored) : false;
+  });
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('settings_fontSize') || 'medium');
+  const [compactMode, setCompactMode] = useState(() => {
+    const stored = localStorage.getItem('settings_compactMode');
+    return stored ? JSON.parse(stored) : false;
+  });
+  // Add a state to track save status
+  const [saveStatus, setSaveStatus] = useState('');
+
+  // Save handler
+  const handleSave = (e) => {
+    e.preventDefault();
+    localStorage.setItem('settings_name', name);
+    localStorage.setItem('settings_email', email);
+    localStorage.setItem('settings_defaultStatus', defaultStatus);
+    localStorage.setItem('settings_defaultSort', defaultSort);
+    localStorage.setItem('settings_notifications', JSON.stringify(notifications));
+    localStorage.setItem('settings_fontSize', fontSize);
+    localStorage.setItem('settings_compactMode', JSON.stringify(compactMode));
+    setName(name); // Update context
+    setSaveStatus('Saved!');
+    setTimeout(() => setSaveStatus(''), 1500);
+  };
 
   return (
     <div style={{ maxWidth: 480, margin: '2rem auto', padding: '2rem', background: darkMode ? '#23263a' : '#fff', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}>
       <h2 style={{ marginBottom: '1.5rem' }}>Settings</h2>
-      <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <form
+        style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+        onSubmit={handleSave}
+      >
         {/* Personal Info */}
         <div>
           <label style={{ fontWeight: 500 }}>Name</label>
@@ -102,6 +129,25 @@ export default function Settings() {
           />
           <label htmlFor="darkMode" style={{ fontWeight: 500 }}>Dark Mode</label>
         </div>
+        <button
+          type="submit"
+          style={{
+            marginTop: 12,
+            padding: '0.75rem',
+            borderRadius: 6,
+            border: 'none',
+            background: '#3b82f6',
+            color: '#fff',
+            fontWeight: 600,
+            fontSize: 16,
+            cursor: 'pointer'
+          }}
+        >
+          Save
+        </button>
+        {saveStatus && (
+          <div style={{ color: 'green', fontWeight: 500 }}>{saveStatus}</div>
+        )}
       </form>
     </div>
   );

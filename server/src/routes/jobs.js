@@ -67,6 +67,26 @@ router.get('/', async (req, res) => {
   }
 });
 
+  // GET /api/jobs/:id - fetch one job by id
+  router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const job = await prisma.jobApplication.findUnique({
+        where: { id }
+      });
+
+      if (!job) {
+        return res.status(404).json({ error: 'Job not found' });
+      }
+
+      res.json(job);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch job' });
+    }
+  });
+
+
 
 // POST /api/jobs
 router.post('/', async (req, res) => {

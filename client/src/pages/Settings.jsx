@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { ThemeContext } from '../ThemeContext';
 import { UserContext } from '../UserContext';
 
@@ -21,6 +21,15 @@ export default function Settings() {
   });
   // Add a state to track save status
   const [saveStatus, setSaveStatus] = useState('');
+
+  // Effect to update font size CSS variable
+  useEffect(() => {
+    let size;
+    if (fontSize === 'small') size = '14px';
+    else if (fontSize === 'large') size = '20px';
+    else size = '16px'; // medium
+    document.documentElement.style.setProperty('--font-size-base', size);
+  }, [fontSize]);
 
   // Save handler
   const handleSave = (e) => {

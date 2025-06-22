@@ -31,7 +31,7 @@ const getSelectStyle = (darkMode) => ({
   color: darkMode ? "#f8fafc" : "#222222",
 });
 
-const JobList = () => {
+const JobList = ({ compactMode = false }) => {
   const { darkMode } = useContext(ThemeContext); // Use ThemeContext
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -67,10 +67,96 @@ const JobList = () => {
   if (error) return <div>Error loading jobs: {error}</div>;
   if (jobs.length === 0) return <div>No jobs found.</div>;
 
+  if (compactMode) {
+    // Compact grid view
+    return (
+      <div>
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
+          <h2 style={{ fontSize: "var(--font-size-base)", margin: 0 }}>Job Applications</h2>
+          <select
+            value={sort}
+            onChange={handleSortChange}
+            style={getSelectStyle(darkMode)}
+          >
+            {sortOptions.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "1rem",
+          }}
+        >
+          {jobs.map((job) => (
+            <div
+              key={job.id}
+              style={{
+                background: 'var(--card-bg)',
+                borderRadius: "10px",
+                boxShadow: `0 2px 8px var(--card-shadow)`,
+                padding: "1rem",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                minHeight: "120px",
+                justifyContent: "space-between",
+              }}
+            >
+              <div style={{ fontWeight: 600, fontSize: "var(--font-size-base)", marginBottom: 4 }}>
+                {job.position}
+              </div>
+              <div style={{ fontSize: "calc(var(--font-size-base) * 0.95)", marginBottom: 8 }}>
+                {job.company}
+              </div>
+              <span
+                style={{
+                  backgroundColor: statusColors[job.status]?.bg || 'gray',
+                  color: statusColors[job.status]?.text || '#fff',
+                  padding: "0.25rem 0.75rem",
+                  borderRadius: "12px",
+                  fontWeight: "600",
+                  fontSize: "calc(var(--font-size-base) * 0.85)",
+                  textTransform: "capitalize",
+                  marginBottom: 8,
+                }}
+              >
+                {job.status}
+              </span>
+              <Link
+                to={`/jobs/${job.id}/edit`}
+                style={{
+                  backgroundColor: 'var(--button-bg)',
+                  color: 'var(--button-text)',
+                  padding: '0.4rem 0.8rem',
+                  borderRadius: '6px',
+                  textDecoration: 'none',
+                  fontWeight: '600',
+                  fontSize: "var(--font-size-base)",
+                  border: '1px solid transparent',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                  alignSelf: "flex-end",
+                  marginTop: "auto",
+                }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--button-text)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = 'transparent'}
+              >
+                Edit
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
-        <h2 style={{ fontSize: "1.5rem", margin: 0 }}>Job Applications</h2>
+        <h2 style={{ fontSize: "var(--font-size-base)", margin: 0 }}>Job Applications</h2>
         <select
           value={sort}
           onChange={handleSortChange}
@@ -97,8 +183,8 @@ const JobList = () => {
             }}
           >
             <div>
-              <strong style={{ fontSize: "1.1rem" }}>{job.position}</strong> at {job.company}
-              <div style={{ fontSize: "0.9rem", marginTop: "0.3rem" }}>
+              <strong style={{ fontSize: "calc(var(--font-size-base) * 1.1)" }}>{job.position}</strong> at {job.company}
+              <div style={{ fontSize: "calc(var(--font-size-base) * 0.9)", marginTop: "0.3rem" }}>
                 {job.location}
               </div>
             </div>
@@ -110,7 +196,7 @@ const JobList = () => {
                   padding: "0.25rem 0.75rem",
                   borderRadius: "12px",
                   fontWeight: "600",
-                  fontSize: "0.85rem",
+                  fontSize: "calc(var(--font-size-base) * 0.85)",
                   textTransform: "capitalize",
                 }}
               >
@@ -125,7 +211,7 @@ const JobList = () => {
                   borderRadius: '6px',
                   textDecoration: 'none',
                   fontWeight: '600',
-                  fontSize: '0.85rem',
+                  fontSize: "var(--font-size-base)",
                   border: '1px solid transparent',
                   cursor: 'pointer',
                   userSelect: 'none',

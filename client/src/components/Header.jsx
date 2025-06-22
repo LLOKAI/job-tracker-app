@@ -52,6 +52,7 @@ export default function Header() {
             borderRadius: '4px',
             cursor: 'pointer',
             fontWeight: '600',
+            fontSize: 'var(--font-size-base)', // <-- update here
           }}
           onClick={() => alert('Logout clicked!')}
         >

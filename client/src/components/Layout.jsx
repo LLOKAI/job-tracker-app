@@ -7,8 +7,8 @@ export default function Layout({ children }) {
   const { darkMode } = useContext(ThemeContext);
   const links = [
     { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Settings', path: '/settings' },
-    { name: 'Add Job', path: '/jobs/new' }
+    { name: 'Add Job', path: '/jobs/new' },
+    { name: 'Settings', path: '/settings' }
   ];
 
   const location = useLocation();

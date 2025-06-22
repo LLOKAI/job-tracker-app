@@ -5,6 +5,7 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import NewJob from './pages/NewJob';
+import EditJob from './pages/EditJob';
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/jobs/new" element={<NewJob />} />
+          <Route path="/jobs/:id/edit" element={<EditJob />} />
           {/* Add more routes here later */}
         </Routes>
       </Layout>

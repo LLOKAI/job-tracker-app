@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const statusColors = {
-  APPLIED: "bg-blue-100 text-blue-800",
-  INTERVIEW: "bg-yellow-100 text-yellow-800",
-  REJECTED: "bg-red-100 text-red-800",
-  OFFER: "bg-green-100 text-green-800",
+  APPLIED: { bg: "#DBEAFE", text: "#1E40AF" },     // light blue bg, darker blue text
+  INTERVIEW: { bg: "#FEF3C7", text: "#92400E" },   // light yellow bg, darker yellow text
+  REJECTED: { bg: "#FEE2E2", text: "#991B1B" },    // light red bg, darker red text
+  OFFER: { bg: "#DCFCE7", text: "#166534" },       // light green bg, darker green text
 };
+
 
 const JobList = () => {
   const [jobs, setJobs] = useState([]);
@@ -37,7 +39,7 @@ const JobList = () => {
 
   return (
     <div>
-      <h2 style={{ marginBottom: '1rem', fontSize: '1.5rem' }}>Job Applications</h2>
+      <h2 style={{ marginBottom: "1rem", fontSize: "1.5rem" }}>Job Applications</h2>
       <ul style={{ listStyle: "none", padding: 0 }}>
         {jobs.map((job) => (
           <li
@@ -54,23 +56,47 @@ const JobList = () => {
             }}
           >
             <div>
-              <strong style={{ fontSize: '1.1rem' }}>{job.position}</strong>{" "}
-              at {job.company}
-              <div style={{ color: "#555", marginTop: '0.3rem' }}>{job.location}</div>
+              <strong style={{ fontSize: "1.1rem" }}>{job.position}</strong> at {job.company}
+              <div style={{ color: "#555", marginTop: "0.3rem" }}>{job.location}</div>
             </div>
-            <span
-              style={{
-                padding: "0.3rem 0.8rem",
-                borderRadius: "12px",
-                fontWeight: "600",
-                fontSize: "0.85rem",
-                color: statusColors[job.status]?.split(" ")[1] || "#333",
-                backgroundColor: statusColors[job.status]?.split(" ")[0] || "#eee",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {job.status}
-            </span>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <span
+                style={{
+                  padding: "0.3rem 0.8rem",
+                  borderRadius: "12px",
+                  fontWeight: "600",
+                  fontSize: "0.85rem",
+                  color: statusColors[job.status]?.text || "#333",
+                  backgroundColor: statusColors[job.status]?.bg || "#eee",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {job.status}
+              </span>
+
+
+              {/* Add Edit Link here */}
+              <Link
+                to={`/jobs/${job.id}/edit`}
+                style={{
+                  display: 'inline-block',
+                  padding: '0.4rem 0.8rem',
+                  backgroundColor: '#3b82f6',
+                  color: '#fff',
+                  fontWeight: '600',
+                  borderRadius: '4px',
+                  textDecoration: 'none',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s ease',
+                }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#2563eb'} // a bit darker on hover
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = '#3b82f6'}
+              >
+                Edit
+              </Link>
+
+            </div>
           </li>
         ))}
       </ul>

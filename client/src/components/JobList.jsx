@@ -688,6 +688,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
             }}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Close button */}
             <button
               onClick={() => setSelectedJob(null)}
               style={{
@@ -704,27 +705,25 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
             >
               ×
             </button>
-            <h2 style={{ marginTop: 0, marginBottom: 12 }}>
-              {selectedJob.position}
-            </h2>
-            <div style={{ fontWeight: 500, marginBottom: 8 }}>
-              {selectedJob.company}
-            </div>
-            <div style={{ marginBottom: 8 }}>
-              <span
-                style={{
-                  backgroundColor: statusColors[selectedJob.status]?.bg || "gray",
-                  color: statusColors[selectedJob.status]?.text || "#fff",
-                  padding: "0.25rem 0.75rem",
-                  borderRadius: "12px",
-                  fontWeight: "600",
-                  fontSize: "1rem",
-                  textTransform: "capitalize",
-                }}
-              >
-                {selectedJob.status}
-              </span>
-            </div>
+            {/* Status badge in top right */}
+            <span
+              style={{
+                position: "absolute",
+                top: 18,
+                right: 48,
+                backgroundColor: statusColors[selectedJob.status]?.bg || "gray",
+                color: statusColors[selectedJob.status]?.text || "#fff",
+                padding: "0.25rem 0.75rem",
+                borderRadius: "12px",
+                fontWeight: "600",
+                fontSize: "1rem",
+                textTransform: "capitalize",
+              }}
+            >
+              {selectedJob.status}
+            </span>
+            <h2 style={{ marginTop: 0, marginBottom: 12 }}>{selectedJob.position}</h2>
+            <div style={{ fontWeight: 500, marginBottom: 8 }}>{selectedJob.company}</div>
             <div style={{ color: "#64748b", marginBottom: 8 }}>
               <b>Location:</b> {selectedJob.location}
             </div>
@@ -794,6 +793,25 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
               >
                 Edit
               </Link>
+              <button
+                style={{
+                  backgroundColor: "#ef4444",
+                  color: "#fff",
+                  padding: "0.4rem 1.2rem",
+                  borderRadius: "6px",
+                  border: "none",
+                  fontWeight: "600",
+                  fontSize: "1rem",
+                  cursor: "pointer",
+                  userSelect: "none",
+                }}
+                onClick={() => {
+                  setDeleteJobId(selectedJob.id);
+                  setSelectedJob(null);
+                }}
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>

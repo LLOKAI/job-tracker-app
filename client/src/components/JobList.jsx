@@ -705,7 +705,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
             >
               ×
             </button>
-            {/* Status badge in top right */}
+            {/* REMOVE this block:
             <span
               style={{
                 position: "absolute",
@@ -722,7 +722,33 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
             >
               {selectedJob.status}
             </span>
-            <h2 style={{ marginTop: 0, marginBottom: 12 }}>{selectedJob.position}</h2>
+            */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: 12,
+                gap: 12,
+              }}
+            >
+              <h2 style={{ margin: 0 }}>{selectedJob.position}</h2>
+              <span
+                style={{
+                  backgroundColor: statusColors[selectedJob.status]?.bg || "gray",
+                  color: statusColors[selectedJob.status]?.text || "#fff",
+                  padding: "0.25rem 0.75rem",
+                  borderRadius: "12px",
+                  fontWeight: "600",
+                  fontSize: "1rem",
+                  textTransform: "capitalize",
+                  marginLeft: 16,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {selectedJob.status}
+              </span>
+            </div>
             <div style={{ fontWeight: 500, marginBottom: 8 }}>{selectedJob.company}</div>
             <div style={{ color: "#64748b", marginBottom: 8 }}>
               <b>Location:</b> {selectedJob.location}

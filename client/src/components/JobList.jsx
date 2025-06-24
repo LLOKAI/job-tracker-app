@@ -702,6 +702,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
             >
               ×
             </button>
+            {/* Modal header: title, edit/delete, status badge */}
             <div
               style={{
                 display: "flex",
@@ -711,22 +712,53 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                 gap: 12,
               }}
             >
-              <h2 style={{ margin: 0 }}>{selectedJob.position}</h2>
-              <span
-                style={{
-                  backgroundColor: statusColors[selectedJob.status]?.bg || "gray",
-                  color: statusColors[selectedJob.status]?.text || "#fff",
-                  padding: "0.25rem 0.75rem",
-                  borderRadius: "12px",
-                  fontWeight: "600",
-                  fontSize: "1rem",
-                  textTransform: "capitalize",
-                  marginLeft: 16,
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {selectedJob.status}
-              </span>
+              <h2 style={{ margin: 0, flex: 1 }}>{selectedJob.position}</h2>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <Link
+                  to={`/jobs/${selectedJob.id}/edit`}
+                  style={{
+                    ...iconButtonStyle,
+                    color: "var(--button-bg)",
+                    fontSize: 28,
+                  }}
+                  title="Edit"
+                  onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                  onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
+                >
+                  <MdEdit />
+                </Link>
+                <button
+                  style={{
+                    ...iconButtonStyle,
+                    color: "#ef4444",
+                    fontSize: 28,
+                  }}
+                  onClick={() => {
+                    setDeleteJobId(selectedJob.id);
+                    setSelectedJob(null);
+                  }}
+                  title="Delete"
+                  onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                  onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
+                >
+                  <MdDelete />
+                </button>
+                <span
+                  style={{
+                    backgroundColor: statusColors[selectedJob.status]?.bg || "gray",
+                    color: statusColors[selectedJob.status]?.text || "#fff",
+                    padding: "0.25rem 0.75rem",
+                    borderRadius: "12px",
+                    fontWeight: "600",
+                    fontSize: "1rem",
+                    textTransform: "capitalize",
+                    marginLeft: 16,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {selectedJob.status}
+                </span>
+              </div>
             </div>
             <div style={{ fontWeight: 500, marginBottom: 8 }}>{selectedJob.company}</div>
             <div style={{ color: "#64748b", marginBottom: 8 }}>
@@ -780,37 +812,6 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                 </a>
               </div>
             )}
-            <div style={{ marginTop: 24, display: "flex", gap: 12 }}>
-              <Link
-                to={`/jobs/${selectedJob.id}/edit`}
-                style={{
-                  ...iconButtonStyle,
-                  color: "var(--button-bg)",
-                  fontSize: 28,
-                }}
-                title="Edit"
-                onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
-                onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
-              >
-                <MdEdit />
-              </Link>
-              <button
-                style={{
-                  ...iconButtonStyle,
-                  color: "#ef4444",
-                  fontSize: 28,
-                }}
-                onClick={() => {
-                  setDeleteJobId(selectedJob.id);
-                  setSelectedJob(null);
-                }}
-                title="Delete"
-                onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
-                onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
-              >
-                <MdDelete />
-              </button>
-            </div>
           </div>
         </div>
       )}

@@ -301,6 +301,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
+                  alignItems: "center", // add this to center all children horizontally
                 }}
               >
                 <div
@@ -308,6 +309,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                     fontWeight: 600,
                     fontSize: "var(--font-size-base)",
                     marginBottom: 4,
+                    textAlign: "center", // center text
                   }}
                 >
                   {job.position}
@@ -316,6 +318,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                   style={{
                     fontSize: "calc(var(--font-size-base) * 0.95)",
                     marginBottom: 8,
+                    textAlign: "center", // center text
                   }}
                 >
                   {job.company}
@@ -330,7 +333,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                     fontSize: "calc(var(--font-size-base) * 0.85)",
                     textTransform: "capitalize",
                     marginBottom: 8,
-                    alignSelf: "flex-start",
+                    alignSelf: "center", // center the status badge
                   }}
                 >
                   {job.status}

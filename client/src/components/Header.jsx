@@ -4,6 +4,8 @@ import { UserContext } from '../UserContext';
 
 import { MdOutlineDarkMode } from "react-icons/md";
 import { MdOutlineLightMode } from "react-icons/md";
+import { FaBriefcase } from "react-icons/fa";
+import Logo from './Logo';
 
 export default function Header() {
   const { darkMode, setDarkMode } = useContext(ThemeContext);
@@ -14,13 +16,14 @@ export default function Header() {
       style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         padding: '1rem 2rem',
         background: 'var(--header-bg)',
         boxShadow: darkMode ? '0 1px 4px rgba(0,0,0,0.7)' : '0 1px 4px rgba(0,0,0,0.1)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+      {/* Left: dark mode */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
         <button
           aria-label="Toggle dark mode"
           onClick={() => setDarkMode(!darkMode)}
@@ -42,7 +45,29 @@ export default function Header() {
         >
           {darkMode ? <MdOutlineDarkMode color='#ffffff' /> : <MdOutlineLightMode color='#000000' />}
         </button>
-        <div style={{ fontWeight: 500 }}>Hello, {name}</div>
+      </div>
+      {/* Right: Greeting, avatar, logout */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <div style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
+          Hello, {name}
+          <span
+            style={{
+              background: '#3b82f6',
+              color: '#fff',
+              borderRadius: '50%',
+              width: 32,
+              height: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 700,
+              fontSize: 16,
+              marginLeft: 4,
+            }}
+          >
+            {name?.[0]?.toUpperCase() || "?"}
+          </span>
+        </div>
         <button
           style={{
             backgroundColor: 'var(--button-bg)',
@@ -52,9 +77,10 @@ export default function Header() {
             borderRadius: '4px',
             cursor: 'pointer',
             fontWeight: '600',
-            fontSize: 'var(--font-size-base)', // <-- update here
+            fontSize: 'var(--font-size-base)',
           }}
           onClick={() => alert('Logout clicked!')}
+          title="Logout"
         >
           Logout
         </button>

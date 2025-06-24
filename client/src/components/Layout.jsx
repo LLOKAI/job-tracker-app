@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import Header from './Header';
 import { Link, useLocation } from 'react-router-dom';
 import { ThemeContext } from '../ThemeContext';
+import Logo from './Logo';
 
 export default function Layout({ children }) {
   const { darkMode } = useContext(ThemeContext);
@@ -35,7 +36,7 @@ export default function Layout({ children }) {
           gap: '1.5rem',
         }}
       >
-        <h2 style={{ marginBottom: '2rem' }}>Job Tracker</h2>
+        <Logo />
         <nav>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             {links.map(link => (

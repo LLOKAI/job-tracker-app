@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { ThemeContext } from "../ThemeContext";
-import { MdViewModule, MdViewList } from "react-icons/md";
+import { MdViewModule, MdViewList, MdEdit, MdDelete } from "react-icons/md";
 
 const statusColors = {
   APPLIED: {
@@ -51,6 +51,23 @@ const getSelectStyle = (darkMode) => ({
   color: darkMode ? "#f8fafc" : "#222222",
 });
 
+const iconButtonStyle = {
+  background: "none",
+  border: "none",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  padding: 6,
+  borderRadius: 8,
+  transition: "box-shadow 0.15s, background 0.15s",
+  boxShadow: "none", // Ensure no permanent shadow
+};
+const iconButtonHoverStyle = {
+  ...iconButtonStyle,
+  boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+  background: "#e0e7ef",
+};
+
 const JobList = ({ compactMode: initialCompactMode = false }) => {
   const { darkMode } = useContext(ThemeContext);
   const [jobs, setJobs] = useState([]);
@@ -68,6 +85,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
   const [searchInput, setSearchInput] = useState("");
   const [deleteJobId, setDeleteJobId] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
 
   useEffect(() => {
     setCompactMode(initialCompactMode);
@@ -270,7 +288,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
           )}
         </div>
       ) : compactMode ? (
-        // ...compact grid view...
+        // --- Compact grid view ---
         <div
           style={{
             display: "grid",
@@ -281,17 +299,23 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
           {jobs.map((job) => (
             <div
               key={job.id}
+              onClick={e => {
+                if (e.target.tagName === "A" || e.target.tagName === "BUTTON") return;
+                setSelectedJob(job);
+              }}
               style={{
                 background: "var(--card-bg)",
                 borderRadius: "10px",
                 boxShadow: `0 2px 8px var(--card-shadow)`,
                 padding: "1rem",
                 display: "flex",
-                flexDirection: "row", // <-- horizontal split
+                flexDirection: "row",
                 alignItems: "stretch",
                 minHeight: "120px",
                 justifyContent: "space-between",
                 gap: "1.5rem",
+                cursor: "pointer",
+                transition: "box-shadow 0.2s",
               }}
             >
               {/* Left: Info */}
@@ -301,7 +325,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "center", // add this to center all children horizontally
+                  alignItems: "center",
                 }}
               >
                 <div
@@ -309,7 +333,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                     fontWeight: 600,
                     fontSize: "var(--font-size-base)",
                     marginBottom: 4,
-                    textAlign: "center", // center text
+                    textAlign: "center",
                   }}
                 >
                   {job.position}
@@ -318,7 +342,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                   style={{
                     fontSize: "calc(var(--font-size-base) * 0.95)",
                     marginBottom: 8,
-                    textAlign: "center", // center text
+                    textAlign: "center",
                   }}
                 >
                   {job.company}
@@ -333,13 +357,13 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                     fontSize: "calc(var(--font-size-base) * 0.85)",
                     textTransform: "capitalize",
                     marginBottom: 8,
-                    alignSelf: "center", // center the status badge
+                    alignSelf: "center",
                   }}
                 >
                   {job.status}
                 </span>
               </div>
-              {/* Right: Buttons */}
+              {/* Right: Icon Buttons */}
               <div
                 style={{
                   display: "flex",
@@ -347,62 +371,55 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                   justifyContent: "center",
                   alignItems: "flex-end",
                   gap: "0.7rem",
-                  minWidth: 80,
+                  minWidth: 40,
                 }}
               >
                 <Link
                   to={`/jobs/${job.id}/edit`}
                   style={{
-                    backgroundColor: "var(--button-bg)",
-                    color: "var(--button-text)",
-                    padding: "0.4rem 0.8rem",
-                    borderRadius: "6px",
-                    textDecoration: "none",
-                    fontWeight: "600",
-                    fontSize: "var(--font-size-base)",
-                    border: "none", // match Delete button
-                    cursor: "pointer",
-                    userSelect: "none",
-                    width: "100%",
-                    textAlign: "center",
-                    boxSizing: "border-box", // ensure sizing is consistent
+                    ...iconButtonStyle,
+                    color: "var(--button-bg)",
+                    fontSize: 24,
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.border = "1px solid var(--button-text)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.border = "none")
-                  }
+                  title="Edit"
+                  tabIndex={0}
+                  onClick={e => e.stopPropagation()}
+                  onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                  onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
                 >
-                  Edit
+                  <MdEdit />
                 </Link>
                 <button
                   style={{
-                    backgroundColor: "#ef4444",
-                    color: "#fff",
-                    padding: "0.4rem 0.8rem",
-                    borderRadius: "6px",
-                    border: "none",
-                    fontWeight: "600",
-                    fontSize: "var(--font-size-base)",
-                    cursor: "pointer",
-                    userSelect: "none",
-                    width: "100%",
+                    ...iconButtonStyle,
+                    color: "#ef4444",
+                    fontSize: 24,
                   }}
-                  onClick={() => setDeleteJobId(job.id)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setDeleteJobId(job.id);
+                  }}
+                  title="Delete"
+                  tabIndex={0}
+                  onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                  onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
                 >
-                  Delete
+                  <MdDelete />
                 </button>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        // ...existing non-compact list view...
+        // --- Row/list view ---
         <ul style={{ listStyle: "none", padding: 0 }}>
           {jobs.map((job) => (
             <li
               key={job.id}
+              onClick={e => {
+                if (e.target.tagName === "A" || e.target.tagName === "BUTTON") return;
+                setSelectedJob(job);
+              }}
               style={{
                 background: "var(--card-bg)",
                 borderRadius: "8px",
@@ -413,9 +430,11 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                 justifyContent: "space-between",
                 alignItems: "center",
                 gap: "2rem",
+                cursor: "pointer",
+                transition: "box-shadow 0.2s",
               }}
             >
-              {/* ...rest of non-compact job info... */}
+              {/* Left: Info */}
               <div style={{ flex: 1 }}>
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "1rem" }}
@@ -502,9 +521,8 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                   </div>
                 )}
               </div>
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "1rem" }}
-              >
+              {/* Right: Icon Buttons */}
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                 <span
                   style={{
                     backgroundColor: statusColors[job.status]?.bg || "gray",
@@ -521,41 +539,34 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                 <Link
                   to={`/jobs/${job.id}/edit`}
                   style={{
-                    backgroundColor: "var(--button-bg)",
-                    color: "var(--button-text)",
-                    padding: "0.4rem 0.8rem",
-                    borderRadius: "6px",
-                    textDecoration: "none",
-                    fontWeight: "600",
-                    fontSize: "var(--font-size-base)",
-                    border: "1px solid transparent",
-                    cursor: "pointer",
-                    userSelect: "none",
+                    ...iconButtonStyle,
+                    color: "var(--button-bg)",
+                    fontSize: 24,
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.borderColor = "var(--button-text)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.borderColor = "transparent")
-                  }
+                  title="Edit"
+                  tabIndex={0}
+                  onClick={e => e.stopPropagation()}
+                  onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                  onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
                 >
-                  Edit
+                  <MdEdit />
                 </Link>
                 <button
                   style={{
-                    backgroundColor: "#ef4444",
-                    color: "#fff",
-                    padding: "0.4rem 0.8rem",
-                    borderRadius: "6px",
-                    border: "none",
-                    fontWeight: "600",
-                    fontSize: "var(--font-size-base)",
-                    cursor: "pointer",
-                    userSelect: "none",
+                    ...iconButtonStyle,
+                    color: "#ef4444",
+                    fontSize: 24,
                   }}
-                  onClick={() => setDeleteJobId(job.id)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setDeleteJobId(job.id);
+                  }}
+                  title="Delete"
+                  tabIndex={0}
+                  onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                  onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
                 >
-                  Delete
+                  <MdDelete />
                 </button>
               </div>
             </li>
@@ -638,6 +649,166 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                 disabled={deleting}
               >
                 {deleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {selectedJob && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.35)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 2000,
+          }}
+          onClick={() => setSelectedJob(null)}
+        >
+          <div
+            style={{
+              background: darkMode ? "#23263a" : "#fff",
+              color: darkMode ? "#f8fafc" : "#222",
+              padding: "2.5rem 2rem",
+              borderRadius: 16,
+              boxShadow: "0 2px 24px rgba(0,0,0,0.22)",
+              minWidth: 340,
+              maxWidth: 420,
+              width: "90vw",
+              textAlign: "left",
+              position: "relative",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setSelectedJob(null)}
+              style={{
+                position: "absolute",
+                top: 16,
+                right: 16,
+                background: "transparent",
+                border: "none",
+                color: darkMode ? "#f8fafc" : "#222",
+                fontSize: 22,
+                cursor: "pointer",
+              }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: 12,
+                gap: 12,
+              }}
+            >
+              <h2 style={{ margin: 0 }}>{selectedJob.position}</h2>
+              <span
+                style={{
+                  backgroundColor: statusColors[selectedJob.status]?.bg || "gray",
+                  color: statusColors[selectedJob.status]?.text || "#fff",
+                  padding: "0.25rem 0.75rem",
+                  borderRadius: "12px",
+                  fontWeight: "600",
+                  fontSize: "1rem",
+                  textTransform: "capitalize",
+                  marginLeft: 16,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {selectedJob.status}
+              </span>
+            </div>
+            <div style={{ fontWeight: 500, marginBottom: 8 }}>{selectedJob.company}</div>
+            <div style={{ color: "#64748b", marginBottom: 8 }}>
+              <b>Location:</b> {selectedJob.location}
+            </div>
+            {selectedJob.appliedDate && (
+              <div style={{ color: "#64748b", marginBottom: 8 }}>
+                <b>Applied:</b> {new Date(selectedJob.appliedDate).toLocaleDateString()}
+              </div>
+            )}
+            {selectedJob.tags && selectedJob.tags.length > 0 && (
+              <div style={{ marginBottom: 8 }}>
+                <b>Tags:</b>{" "}
+                {selectedJob.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    style={{
+                      background: darkMode ? "#334155" : "#e0e7ef",
+                      color: darkMode ? "#bae6fd" : "#334155",
+                      borderRadius: 6,
+                      padding: "0.1rem 0.5rem",
+                      marginRight: 4,
+                      fontSize: "0.95rem",
+                      fontWeight: 500,
+                      display: "inline-block",
+                    }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+            {selectedJob.notes && (
+              <div style={{ marginBottom: 8 }}>
+                <b>Notes:</b> {selectedJob.notes}
+              </div>
+            )}
+            {selectedJob.url && (
+              <div style={{ marginBottom: 8 }}>
+                <a
+                  href={selectedJob.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: "var(--button-bg)",
+                    textDecoration: "underline",
+                    fontSize: "1rem",
+                  }}
+                >
+                  Job Posting
+                </a>
+              </div>
+            )}
+            <div style={{ marginTop: 24, display: "flex", gap: 12 }}>
+              <Link
+                to={`/jobs/${selectedJob.id}/edit`}
+                style={{
+                  ...iconButtonStyle,
+                  color: "var(--button-bg)",
+                  fontSize: 28,
+                }}
+                title="Edit"
+                onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
+              >
+                <MdEdit />
+              </Link>
+              <button
+                style={{
+                  ...iconButtonStyle,
+                  color: "#ef4444",
+                  fontSize: 28,
+                }}
+                onClick={() => {
+                  setDeleteJobId(selectedJob.id);
+                  setSelectedJob(null);
+                }}
+                title="Delete"
+                onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
+              >
+                <MdDelete />
               </button>
             </div>
           </div>

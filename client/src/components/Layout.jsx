@@ -3,6 +3,7 @@ import Header from './Header';
 import { Link, useLocation } from 'react-router-dom';
 import { ThemeContext } from '../ThemeContext';
 import Logo from './Logo';
+import { FaGithub } from "react-icons/fa";
 
 export default function Layout({ children }) {
   const { darkMode } = useContext(ThemeContext);
@@ -34,42 +35,57 @@ export default function Layout({ children }) {
           display: 'flex',
           flexDirection: 'column',
           gap: '1.5rem',
+          justifyContent: 'space-between', // Add this to push footer to bottom
         }}
       >
-        <Logo />
-        <nav>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {links.map(link => (
-              <li key={link.name} style={{ marginBottom: '0.5rem' }}>
-                <Link
-                  to={link.path}
-                  style={{
-                    display: 'block',
-                    padding: '0.6rem 1rem',
-                    borderRadius: '4px',
-                    backgroundColor: activePath === link.path ? 'var(--link-active-bg)' : 'transparent',
-                    color: 'var(--button-text)',
-                    fontWeight: activePath === link.path ? '600' : '400',
-                    textDecoration: 'none',
-                    transition: 'background-color 0.3s ease',
-                  }}
-                  onMouseEnter={e => {
-                    if (activePath !== link.path) {
-                      e.currentTarget.style.backgroundColor = 'var(--link-hover-bg)';
-                    }
-                  }}
-                  onMouseLeave={e => {
-                    if (activePath !== link.path) {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }
-                  }}
-                >
-                  {link.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div>
+          <Logo />
+          <nav>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {links.map(link => (
+                <li key={link.name} style={{ marginBottom: '0.5rem' }}>
+                  <Link
+                    to={link.path}
+                    style={{
+                      display: 'block',
+                      padding: '0.6rem 1rem',
+                      borderRadius: '4px',
+                      backgroundColor: activePath === link.path ? 'var(--link-active-bg)' : 'transparent',
+                      color: 'var(--button-text)',
+                      fontWeight: activePath === link.path ? '600' : '400',
+                      textDecoration: 'none',
+                      transition: 'background-color 0.3s ease',
+                    }}
+                    onMouseEnter={e => {
+                      if (activePath !== link.path) {
+                        e.currentTarget.style.backgroundColor = 'var(--link-hover-bg)';
+                      }
+                    }}
+                    onMouseLeave={e => {
+                      if (activePath !== link.path) {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }
+                    }}
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+        {/* Sidebar Footer */}
+        <div style={{ marginTop: 'auto', textAlign: 'center', fontSize: 13, opacity: 0.8 }}>
+          <a
+            href="https://github.com/LLOKAI"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'inherit', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            <FaGithub size={18} style={{ verticalAlign: 'middle' }} />
+            <span>created by <b>LLOKAI</b></span>
+          </a>
+        </div>
       </aside>
 
       <main

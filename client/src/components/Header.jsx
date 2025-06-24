@@ -17,12 +17,35 @@ export default function Header() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '1rem 2rem',
+        padding: '1rem 1.5rem',
         background: 'var(--header-bg)',
         boxShadow: darkMode ? '0 1px 4px rgba(0,0,0,0.7)' : '0 1px 4px rgba(0,0,0,0.1)',
       }}
     >
-      {/* Left: dark mode */}
+      {/* Left: greeting, avatar */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <div style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span
+            style={{
+              background: '#4a4e69',
+              color: '#fff',
+              borderRadius: '50%',
+              width: 32,
+              height: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 700,
+              fontSize: 16,
+              marginLeft: 4,
+            }}
+          >
+            {name?.[0]?.toUpperCase() || "?"}
+          </span>
+          Hello, {name}
+        </div>
+      </div>
+      {/* Right: dark mode, logout */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
         <button
           aria-label="Toggle dark mode"
@@ -45,29 +68,6 @@ export default function Header() {
         >
           {darkMode ? <MdOutlineDarkMode color='#ffffff' /> : <MdOutlineLightMode color='#000000' />}
         </button>
-      </div>
-      {/* Right: Greeting, avatar, logout */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-        <div style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
-          Hello, {name}
-          <span
-            style={{
-              background: '#3b82f6',
-              color: '#fff',
-              borderRadius: '50%',
-              width: 32,
-              height: 32,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 700,
-              fontSize: 16,
-              marginLeft: 4,
-            }}
-          >
-            {name?.[0]?.toUpperCase() || "?"}
-          </span>
-        </div>
         <button
           style={{
             backgroundColor: 'var(--button-bg)',

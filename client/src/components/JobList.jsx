@@ -68,6 +68,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
   const [searchInput, setSearchInput] = useState("");
   const [deleteJobId, setDeleteJobId] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
 
   useEffect(() => {
     setCompactMode(initialCompactMode);
@@ -281,17 +282,24 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
           {jobs.map((job) => (
             <div
               key={job.id}
+              onClick={e => {
+                // Prevent opening modal when clicking Edit/Delete
+                if (e.target.tagName === "A" || e.target.tagName === "BUTTON") return;
+                setSelectedJob(job);
+              }}
               style={{
                 background: "var(--card-bg)",
                 borderRadius: "10px",
                 boxShadow: `0 2px 8px var(--card-shadow)`,
                 padding: "1rem",
                 display: "flex",
-                flexDirection: "row", // <-- horizontal split
+                flexDirection: "row",
                 alignItems: "stretch",
                 minHeight: "120px",
                 justifyContent: "space-between",
                 gap: "1.5rem",
+                cursor: "pointer", // add pointer
+                transition: "box-shadow 0.2s",
               }}
             >
               {/* Left: Info */}
@@ -403,6 +411,10 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
           {jobs.map((job) => (
             <li
               key={job.id}
+              onClick={e => {
+                if (e.target.tagName === "A" || e.target.tagName === "BUTTON") return;
+                setSelectedJob(job);
+              }}
               style={{
                 background: "var(--card-bg)",
                 borderRadius: "8px",
@@ -413,6 +425,8 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                 justifyContent: "space-between",
                 alignItems: "center",
                 gap: "2rem",
+                cursor: "pointer", // add pointer
+                transition: "box-shadow 0.2s",
               }}
             >
               {/* ...rest of non-compact job info... */}
@@ -639,6 +653,147 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
               >
                 {deleting ? "Deleting..." : "Delete"}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {selectedJob && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.35)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 2000,
+          }}
+          onClick={() => setSelectedJob(null)}
+        >
+          <div
+            style={{
+              background: darkMode ? "#23263a" : "#fff",
+              color: darkMode ? "#f8fafc" : "#222",
+              padding: "2.5rem 2rem",
+              borderRadius: 16,
+              boxShadow: "0 2px 24px rgba(0,0,0,0.22)",
+              minWidth: 340,
+              maxWidth: 420,
+              width: "90vw",
+              textAlign: "left",
+              position: "relative",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelectedJob(null)}
+              style={{
+                position: "absolute",
+                top: 16,
+                right: 16,
+                background: "transparent",
+                border: "none",
+                color: darkMode ? "#f8fafc" : "#222",
+                fontSize: 22,
+                cursor: "pointer",
+              }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <h2 style={{ marginTop: 0, marginBottom: 12 }}>
+              {selectedJob.position}
+            </h2>
+            <div style={{ fontWeight: 500, marginBottom: 8 }}>
+              {selectedJob.company}
+            </div>
+            <div style={{ marginBottom: 8 }}>
+              <span
+                style={{
+                  backgroundColor: statusColors[selectedJob.status]?.bg || "gray",
+                  color: statusColors[selectedJob.status]?.text || "#fff",
+                  padding: "0.25rem 0.75rem",
+                  borderRadius: "12px",
+                  fontWeight: "600",
+                  fontSize: "1rem",
+                  textTransform: "capitalize",
+                }}
+              >
+                {selectedJob.status}
+              </span>
+            </div>
+            <div style={{ color: "#64748b", marginBottom: 8 }}>
+              <b>Location:</b> {selectedJob.location}
+            </div>
+            {selectedJob.appliedDate && (
+              <div style={{ color: "#64748b", marginBottom: 8 }}>
+                <b>Applied:</b> {new Date(selectedJob.appliedDate).toLocaleDateString()}
+              </div>
+            )}
+            {selectedJob.tags && selectedJob.tags.length > 0 && (
+              <div style={{ marginBottom: 8 }}>
+                <b>Tags:</b>{" "}
+                {selectedJob.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    style={{
+                      background: darkMode ? "#334155" : "#e0e7ef",
+                      color: darkMode ? "#bae6fd" : "#334155",
+                      borderRadius: 6,
+                      padding: "0.1rem 0.5rem",
+                      marginRight: 4,
+                      fontSize: "0.95rem",
+                      fontWeight: 500,
+                      display: "inline-block",
+                    }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+            {selectedJob.notes && (
+              <div style={{ marginBottom: 8 }}>
+                <b>Notes:</b> {selectedJob.notes}
+              </div>
+            )}
+            {selectedJob.url && (
+              <div style={{ marginBottom: 8 }}>
+                <a
+                  href={selectedJob.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: "var(--button-bg)",
+                    textDecoration: "underline",
+                    fontSize: "1rem",
+                  }}
+                >
+                  Job Posting
+                </a>
+              </div>
+            )}
+            <div style={{ marginTop: 24, display: "flex", gap: 12 }}>
+              <Link
+                to={`/jobs/${selectedJob.id}/edit`}
+                style={{
+                  backgroundColor: "var(--button-bg)",
+                  color: "var(--button-text)",
+                  padding: "0.4rem 1.2rem",
+                  borderRadius: "6px",
+                  textDecoration: "none",
+                  fontWeight: "600",
+                  fontSize: "1rem",
+                  border: "none",
+                  cursor: "pointer",
+                  userSelect: "none",
+                }}
+              >
+                Edit
+              </Link>
             </div>
           </div>
         </div>

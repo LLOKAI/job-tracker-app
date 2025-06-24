@@ -187,7 +187,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                 background: "var(--button-bg)",
                 color: "var(--button-text)",
                 border: "none",
-                borderRadius: 6,
+                borderRadius: "6px",
                 padding: "0.4rem 0.8rem",
                 fontWeight: 600,
                 fontSize: "1rem",
@@ -279,7 +279,6 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
           }}
         >
           {jobs.map((job) => (
-            // ...existing compact card code...
             <div
               key={job.id}
               style={{
@@ -288,83 +287,110 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                 boxShadow: `0 2px 8px var(--card-shadow)`,
                 padding: "1rem",
                 display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
+                flexDirection: "row", // <-- horizontal split
+                alignItems: "stretch",
                 minHeight: "120px",
                 justifyContent: "space-between",
+                gap: "1.5rem",
               }}
             >
+              {/* Left: Info */}
               <div
                 style={{
-                  fontWeight: 600,
-                  fontSize: "var(--font-size-base)",
-                  marginBottom: 4,
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
                 }}
               >
-                {job.position}
+                <div
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "var(--font-size-base)",
+                    marginBottom: 4,
+                  }}
+                >
+                  {job.position}
+                </div>
+                <div
+                  style={{
+                    fontSize: "calc(var(--font-size-base) * 0.95)",
+                    marginBottom: 8,
+                  }}
+                >
+                  {job.company}
+                </div>
+                <span
+                  style={{
+                    backgroundColor: statusColors[job.status]?.bg || "gray",
+                    color: statusColors[job.status]?.text || "#fff",
+                    padding: "0.25rem 0.75rem",
+                    borderRadius: "12px",
+                    fontWeight: "600",
+                    fontSize: "calc(var(--font-size-base) * 0.85)",
+                    textTransform: "capitalize",
+                    marginBottom: 8,
+                    alignSelf: "flex-start",
+                  }}
+                >
+                  {job.status}
+                </span>
               </div>
+              {/* Right: Buttons */}
               <div
                 style={{
-                  fontSize: "calc(var(--font-size-base) * 0.95)",
-                  marginBottom: 8,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "flex-end",
+                  gap: "0.7rem",
+                  minWidth: 80,
                 }}
               >
-                {job.company}
+                <Link
+                  to={`/jobs/${job.id}/edit`}
+                  style={{
+                    backgroundColor: "var(--button-bg)",
+                    color: "var(--button-text)",
+                    padding: "0.4rem 0.8rem",
+                    borderRadius: "6px",
+                    textDecoration: "none",
+                    fontWeight: "600",
+                    fontSize: "var(--font-size-base)",
+                    border: "none", // match Delete button
+                    cursor: "pointer",
+                    userSelect: "none",
+                    width: "100%",
+                    textAlign: "center",
+                    boxSizing: "border-box", // ensure sizing is consistent
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.border = "1px solid var(--button-text)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.border = "none")
+                  }
+                >
+                  Edit
+                </Link>
+                <button
+                  style={{
+                    backgroundColor: "#ef4444",
+                    color: "#fff",
+                    padding: "0.4rem 0.8rem",
+                    borderRadius: "6px",
+                    border: "none",
+                    fontWeight: "600",
+                    fontSize: "var(--font-size-base)",
+                    cursor: "pointer",
+                    userSelect: "none",
+                    width: "100%",
+                  }}
+                  onClick={() => setDeleteJobId(job.id)}
+                >
+                  Delete
+                </button>
               </div>
-              <span
-                style={{
-                  backgroundColor: statusColors[job.status]?.bg || "gray",
-                  color: statusColors[job.status]?.text || "#fff",
-                  padding: "0.25rem 0.75rem",
-                  borderRadius: "12px",
-                  fontWeight: "600",
-                  fontSize: "calc(var(--font-size-base) * 0.85)",
-                  textTransform: "capitalize",
-                  marginBottom: 8,
-                }}
-              >
-                {job.status}
-              </span>
-              <Link
-                to={`/jobs/${job.id}/edit`}
-                style={{
-                  backgroundColor: "var(--button-bg)",
-                  color: "var(--button-text)",
-                  padding: "0.4rem 0.8rem",
-                  borderRadius: "6px",
-                  textDecoration: "none",
-                  fontWeight: "600",
-                  fontSize: "var(--font-size-base)",
-                  border: "1px solid transparent",
-                  cursor: "pointer",
-                  userSelect: "none",
-                  marginRight: 8,
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.borderColor = "var(--button-text)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.borderColor = "transparent")
-                }
-              >
-                Edit
-              </Link>
-              <button
-                style={{
-                  backgroundColor: "#ef4444",
-                  color: "#fff",
-                  padding: "0.4rem 0.8rem",
-                  borderRadius: "6px",
-                  border: "none",
-                  fontWeight: "600",
-                  fontSize: "var(--font-size-base)",
-                  cursor: "pointer",
-                  userSelect: "none",
-                }}
-                onClick={() => setDeleteJobId(job.id)}
-              >
-                Delete
-              </button>
             </div>
           ))}
         </div>

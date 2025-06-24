@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { ThemeContext } from "../ThemeContext";
-import { MdViewModule, MdViewList } from "react-icons/md";
+import { MdViewModule, MdViewList, MdEdit, MdDelete } from "react-icons/md";
 
 const statusColors = {
   APPLIED: {
@@ -50,6 +50,23 @@ const getSelectStyle = (darkMode) => ({
   backgroundColor: darkMode ? "#334155" : "#ffffff",
   color: darkMode ? "#f8fafc" : "#222222",
 });
+
+const iconButtonStyle = {
+  background: "none",
+  border: "none",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  padding: 6,
+  borderRadius: 8,
+  transition: "box-shadow 0.15s, background 0.15s",
+  boxShadow: "none", // Ensure no permanent shadow
+};
+const iconButtonHoverStyle = {
+  ...iconButtonStyle,
+  boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+  background: "#e0e7ef",
+};
 
 const JobList = ({ compactMode: initialCompactMode = false }) => {
   const { darkMode } = useContext(ThemeContext);
@@ -271,7 +288,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
           )}
         </div>
       ) : compactMode ? (
-        // ...compact grid view...
+        // --- Compact grid view ---
         <div
           style={{
             display: "grid",
@@ -283,7 +300,6 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
             <div
               key={job.id}
               onClick={e => {
-                // Prevent opening modal when clicking Edit/Delete
                 if (e.target.tagName === "A" || e.target.tagName === "BUTTON") return;
                 setSelectedJob(job);
               }}
@@ -298,7 +314,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                 minHeight: "120px",
                 justifyContent: "space-between",
                 gap: "1.5rem",
-                cursor: "pointer", // add pointer
+                cursor: "pointer",
                 transition: "box-shadow 0.2s",
               }}
             >
@@ -309,7 +325,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "center", // add this to center all children horizontally
+                  alignItems: "center",
                 }}
               >
                 <div
@@ -317,7 +333,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                     fontWeight: 600,
                     fontSize: "var(--font-size-base)",
                     marginBottom: 4,
-                    textAlign: "center", // center text
+                    textAlign: "center",
                   }}
                 >
                   {job.position}
@@ -326,7 +342,7 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                   style={{
                     fontSize: "calc(var(--font-size-base) * 0.95)",
                     marginBottom: 8,
-                    textAlign: "center", // center text
+                    textAlign: "center",
                   }}
                 >
                   {job.company}
@@ -341,13 +357,13 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                     fontSize: "calc(var(--font-size-base) * 0.85)",
                     textTransform: "capitalize",
                     marginBottom: 8,
-                    alignSelf: "center", // center the status badge
+                    alignSelf: "center",
                   }}
                 >
                   {job.status}
                 </span>
               </div>
-              {/* Right: Buttons */}
+              {/* Right: Icon Buttons */}
               <div
                 style={{
                   display: "flex",
@@ -355,58 +371,47 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                   justifyContent: "center",
                   alignItems: "flex-end",
                   gap: "0.7rem",
-                  minWidth: 80,
+                  minWidth: 40,
                 }}
               >
                 <Link
                   to={`/jobs/${job.id}/edit`}
                   style={{
-                    backgroundColor: "var(--button-bg)",
-                    color: "var(--button-text)",
-                    padding: "0.4rem 0.8rem",
-                    borderRadius: "6px",
-                    textDecoration: "none",
-                    fontWeight: "600",
-                    fontSize: "var(--font-size-base)",
-                    border: "none", // match Delete button
-                    cursor: "pointer",
-                    userSelect: "none",
-                    width: "100%",
-                    textAlign: "center",
-                    boxSizing: "border-box", // ensure sizing is consistent
+                    ...iconButtonStyle,
+                    color: "var(--button-bg)",
+                    fontSize: 24,
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.border = "1px solid var(--button-text)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.border = "none")
-                  }
+                  title="Edit"
+                  tabIndex={0}
+                  onClick={e => e.stopPropagation()}
+                  onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                  onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
                 >
-                  Edit
+                  <MdEdit />
                 </Link>
                 <button
                   style={{
-                    backgroundColor: "#ef4444",
-                    color: "#fff",
-                    padding: "0.4rem 0.8rem",
-                    borderRadius: "6px",
-                    border: "none",
-                    fontWeight: "600",
-                    fontSize: "var(--font-size-base)",
-                    cursor: "pointer",
-                    userSelect: "none",
-                    width: "100%",
+                    ...iconButtonStyle,
+                    color: "#ef4444",
+                    fontSize: 24,
                   }}
-                  onClick={() => setDeleteJobId(job.id)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setDeleteJobId(job.id);
+                  }}
+                  title="Delete"
+                  tabIndex={0}
+                  onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                  onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
                 >
-                  Delete
+                  <MdDelete />
                 </button>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        // ...existing non-compact list view...
+        // --- Row/list view ---
         <ul style={{ listStyle: "none", padding: 0 }}>
           {jobs.map((job) => (
             <li
@@ -425,11 +430,11 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                 justifyContent: "space-between",
                 alignItems: "center",
                 gap: "2rem",
-                cursor: "pointer", // add pointer
+                cursor: "pointer",
                 transition: "box-shadow 0.2s",
               }}
             >
-              {/* ...rest of non-compact job info... */}
+              {/* Left: Info */}
               <div style={{ flex: 1 }}>
                 <div
                   style={{ display: "flex", alignItems: "center", gap: "1rem" }}
@@ -516,9 +521,8 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                   </div>
                 )}
               </div>
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "1rem" }}
-              >
+              {/* Right: Icon Buttons */}
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                 <span
                   style={{
                     backgroundColor: statusColors[job.status]?.bg || "gray",
@@ -535,41 +539,34 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
                 <Link
                   to={`/jobs/${job.id}/edit`}
                   style={{
-                    backgroundColor: "var(--button-bg)",
-                    color: "var(--button-text)",
-                    padding: "0.4rem 0.8rem",
-                    borderRadius: "6px",
-                    textDecoration: "none",
-                    fontWeight: "600",
-                    fontSize: "var(--font-size-base)",
-                    border: "1px solid transparent",
-                    cursor: "pointer",
-                    userSelect: "none",
+                    ...iconButtonStyle,
+                    color: "var(--button-bg)",
+                    fontSize: 24,
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.borderColor = "var(--button-text)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.borderColor = "transparent")
-                  }
+                  title="Edit"
+                  tabIndex={0}
+                  onClick={e => e.stopPropagation()}
+                  onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                  onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
                 >
-                  Edit
+                  <MdEdit />
                 </Link>
                 <button
                   style={{
-                    backgroundColor: "#ef4444",
-                    color: "#fff",
-                    padding: "0.4rem 0.8rem",
-                    borderRadius: "6px",
-                    border: "none",
-                    fontWeight: "600",
-                    fontSize: "var(--font-size-base)",
-                    cursor: "pointer",
-                    userSelect: "none",
+                    ...iconButtonStyle,
+                    color: "#ef4444",
+                    fontSize: 24,
                   }}
-                  onClick={() => setDeleteJobId(job.id)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setDeleteJobId(job.id);
+                  }}
+                  title="Delete"
+                  tabIndex={0}
+                  onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                  onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
                 >
-                  Delete
+                  <MdDelete />
                 </button>
               </div>
             </li>
@@ -705,24 +702,6 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
             >
               ×
             </button>
-            {/* REMOVE this block:
-            <span
-              style={{
-                position: "absolute",
-                top: 18,
-                right: 48,
-                backgroundColor: statusColors[selectedJob.status]?.bg || "gray",
-                color: statusColors[selectedJob.status]?.text || "#fff",
-                padding: "0.25rem 0.75rem",
-                borderRadius: "12px",
-                fontWeight: "600",
-                fontSize: "1rem",
-                textTransform: "capitalize",
-              }}
-            >
-              {selectedJob.status}
-            </span>
-            */}
             <div
               style={{
                 display: "flex",
@@ -805,38 +784,31 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
               <Link
                 to={`/jobs/${selectedJob.id}/edit`}
                 style={{
-                  backgroundColor: "var(--button-bg)",
-                  color: "var(--button-text)",
-                  padding: "0.4rem 1.2rem",
-                  borderRadius: "6px",
-                  textDecoration: "none",
-                  fontWeight: "600",
-                  fontSize: "1rem",
-                  border: "none",
-                  cursor: "pointer",
-                  userSelect: "none",
+                  ...iconButtonStyle,
+                  color: "var(--button-bg)",
+                  fontSize: 28,
                 }}
+                title="Edit"
+                onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
               >
-                Edit
+                <MdEdit />
               </Link>
               <button
                 style={{
-                  backgroundColor: "#ef4444",
-                  color: "#fff",
-                  padding: "0.4rem 1.2rem",
-                  borderRadius: "6px",
-                  border: "none",
-                  fontWeight: "600",
-                  fontSize: "1rem",
-                  cursor: "pointer",
-                  userSelect: "none",
+                  ...iconButtonStyle,
+                  color: "#ef4444",
+                  fontSize: 28,
                 }}
                 onClick={() => {
                   setDeleteJobId(selectedJob.id);
                   setSelectedJob(null);
                 }}
+                title="Delete"
+                onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
+                onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
               >
-                Delete
+                <MdDelete />
               </button>
             </div>
           </div>

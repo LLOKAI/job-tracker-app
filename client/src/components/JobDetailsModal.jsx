@@ -1,6 +1,12 @@
 import JobStatusBadge from "./JobStatusBadge";
 import JobTags from "./JobTags";
 import JobEditDeleteButtons from "./JobEditDeleteButtons";
+import { MdEdit, MdDelete } from "react-icons/md";
+import {
+  statusColors,
+  iconButtonStyle,
+  iconButtonHoverStyle,
+} from "./jobConstants";
 
 function JobDetailsModal({ job, darkMode, onClose, onDelete }) {
   if (!job) return null;
@@ -33,7 +39,7 @@ function JobDetailsModal({ job, darkMode, onClose, onDelete }) {
           textAlign: "left",
           position: "relative",
         }}
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
@@ -51,6 +57,7 @@ function JobDetailsModal({ job, darkMode, onClose, onDelete }) {
         >
           ×
         </button>
+        {/* Modal header: title, edit/delete, status badge */}
         <div
           style={{
             display: "flex",
@@ -60,8 +67,24 @@ function JobDetailsModal({ job, darkMode, onClose, onDelete }) {
             gap: 12,
           }}
         >
-          <h2 style={{ margin: 0 }}>{job.position}</h2>
-          <JobStatusBadge status={job.status} />
+          <h2 style={{ margin: 0, flex: 1 }}>{job.position}</h2>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <JobEditDeleteButtons
+              jobId={job.id}
+              onEdit={(e) => {
+                e.preventDefault();
+                window.location.href = `/jobs/${job.id}/edit`;
+              }}
+              onDelete={() => {
+                onDelete(job.id);
+                onClose();
+              }}
+              colorEdit="var(--button-bg)"
+              colorDelete="#ef4444"
+              fontSize={28}
+            />
+            <JobStatusBadge status={job.status} />
+          </div>
         </div>
         <div style={{ fontWeight: 500, marginBottom: 8 }}>{job.company}</div>
         <div style={{ color: "#64748b", marginBottom: 8 }}>
@@ -94,19 +117,6 @@ function JobDetailsModal({ job, darkMode, onClose, onDelete }) {
             </a>
           </div>
         )}
-        <div style={{ marginTop: 24, display: "flex", gap: 12 }}>
-          <JobEditDeleteButtons
-            jobId={job.id}
-            onEdit={() => {}}
-            onDelete={() => {
-              onDelete(job.id);
-              onClose();
-            }}
-            colorEdit="var(--button-bg)"
-            colorDelete="#ef4444"
-            fontSize={28}
-          />
-        </div>
       </div>
     </div>
   );

@@ -148,91 +148,95 @@ const JobList = ({ compactMode }) => {
 
   return (
     <div>
-      {/* Header */}
+      {/* Header Row */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+          marginBottom: "0.3rem",
+          justifyContent: "flex-start",
+          flexWrap: "wrap",
+        }}
+        className="joblist-header-row"
+      >
+        <h2 style={{ fontSize: "var(--font-size-base)", margin: 0 }}>
+          Job Applications
+        </h2>
+      </div>
+      {/* Controls Row */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           gap: "1rem",
           marginBottom: "1rem",
-          justifyContent: "flex-start",
           flexWrap: "wrap",
         }}
         className="joblist-controls-row"
       >
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-          flexWrap: "wrap",
-          minWidth: 0,
-        }}>
-          <h2 style={{ fontSize: "var(--font-size-base)", margin: 0 }}>
-            Job Applications
-          </h2>
-          <select
-            value={sort}
-            onChange={handleSortChange}
-            style={getSelectStyle(darkMode)}
-          >
-            {sortOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <form
-            onSubmit={handleSearchSubmit}
-            style={{ display: "flex", alignItems: "center", gap: 4 }}
-          >
-            <input
-              type="text"
-              placeholder="Search jobs..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              style={{
-                ...getSelectStyle(darkMode),
-                width: 250,
-                fontSize: "1rem",
-                borderRadius: 6,
-                border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
-              }}
-            />
-            {searchInput && (
-              <button
-                type="button"
-                onClick={handleSearchClear}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  color: darkMode ? "#f8fafc" : "#222",
-                  cursor: "pointer",
-                  fontSize: "1.2rem",
-                  marginLeft: 2,
-                }}
-                title="Clear"
-              >
-                ×
-              </button>
-            )}
+        <select
+          value={sort}
+          onChange={handleSortChange}
+          style={getSelectStyle(darkMode)}
+        >
+          {sortOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        <form
+          onSubmit={handleSearchSubmit}
+          style={{ display: "flex", alignItems: "center", gap: 4 }}
+        >
+          <input
+            type="text"
+            placeholder="Search jobs..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            style={{
+              ...getSelectStyle(darkMode),
+              width: 250,
+              fontSize: "1rem",
+              borderRadius: 6,
+              border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
+            }}
+          />
+          {searchInput && (
             <button
-              type="submit"
+              type="button"
+              onClick={handleSearchClear}
               style={{
-                background: "var(--button-bg)",
-                color: "var(--button-text)",
+                background: "transparent",
                 border: "none",
-                borderRadius: "6px",
-                padding: "0.4rem 0.8rem",
-                fontWeight: 600,
-                fontSize: "1rem",
+                color: darkMode ? "#f8fafc" : "#222",
                 cursor: "pointer",
+                fontSize: "1.2rem",
                 marginLeft: 2,
               }}
+              title="Clear"
             >
-              Search
+              ×
             </button>
-          </form>
-        </div>
+          )}
+          <button
+            type="submit"
+            style={{
+              background: "var(--button-bg)",
+              color: "var(--button-text)",
+              border: "none",
+              borderRadius: "6px",
+              padding: "0.4rem 0.8rem",
+              fontWeight: 600,
+              fontSize: "1rem",
+              cursor: "pointer",
+              marginLeft: 2,
+            }}
+          >
+            Search
+          </button>
+        </form>
       </div>
       {/* Main Content */}
       {error && (

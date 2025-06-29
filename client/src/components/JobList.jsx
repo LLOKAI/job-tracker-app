@@ -165,7 +165,7 @@ const JobList = ({ compactMode }) => {
               onChange={(e) => setSearchInput(e.target.value)}
               style={{
                 ...getSelectStyle(darkMode),
-                width: 180,
+                width: 250,
                 fontSize: "1rem",
                 borderRadius: 6,
                 border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",

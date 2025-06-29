@@ -1,10 +1,15 @@
+import React from "react";
 import JobStatusBadge from "./JobStatusBadge";
 import JobEditDeleteButtons from "./JobEditDeleteButtons";
 
-function JobCompactCard({ job, onSelect, onDelete }) {
+const JobCompactCard = React.forwardRef(function JobCompactCard(
+  { job, onSelect, onDelete },
+  ref
+) {
   return (
     <div
       key={job.id}
+      ref={ref}
       onClick={onSelect}
       style={{
         background: "var(--card-bg)",
@@ -72,6 +77,6 @@ function JobCompactCard({ job, onSelect, onDelete }) {
       </div>
     </div>
   );
-}
+});
 
 export default JobCompactCard;

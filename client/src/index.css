@@ -78,3 +78,19 @@ body {
   font-family: Arial, sans-serif;
   font-size: var(--font-size-base, 16px);
 }
+
+.joblist-controls-row {
+  /* No effect on desktop, just for targeting */
+}
+
+@media (max-width: 700px) {
+  .joblist-controls-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.7rem !important;
+  }
+  .joblist-controls-row > div {
+    width: 100%;
+    justify-content: flex-start !important;
+  }
+}

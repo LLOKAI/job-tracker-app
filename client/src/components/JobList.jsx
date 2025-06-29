@@ -45,7 +45,7 @@ const getSelectStyle = (darkMode) => ({
 
 // --- Main JobList Component ---
 
-const JobList = ({ compactMode: initialCompactMode = false }) => {
+const JobList = ({ compactMode }) => {
   const { darkMode } = useContext(ThemeContext);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -57,16 +57,11 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
     if (stored === "status") return "status_asc";
     return stored || "date_desc";
   });
-  const [compactMode, setCompactMode] = useState(initialCompactMode);
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [deleteJobId, setDeleteJobId] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
-
-  useEffect(() => {
-    setCompactMode(initialCompactMode);
-  }, [initialCompactMode]);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -105,11 +100,6 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
     setSearch("");
   };
 
-  const handleCompactToggle = (mode) => {
-    setCompactMode(mode);
-    localStorage.setItem("settings_compactMode", JSON.stringify(mode));
-  };
-
   const handleDeleteJob = async (id) => {
     setDeleting(true);
     try {
@@ -138,10 +128,18 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
           alignItems: "center",
           gap: "1rem",
           marginBottom: "1rem",
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
+          flexWrap: "wrap",
         }}
+        className="joblist-controls-row"
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+          flexWrap: "wrap",
+          minWidth: 0,
+        }}>
           <h2 style={{ fontSize: "var(--font-size-base)", margin: 0 }}>
             Job Applications
           </h2>
@@ -207,48 +205,6 @@ const JobList = ({ compactMode: initialCompactMode = false }) => {
               Search
             </button>
           </form>
-        </div>
-        <div style={{ display: "flex", gap: 4 }}>
-          <button
-            aria-label="Grid view"
-            onClick={() => handleCompactToggle(true)}
-            style={{
-              background: compactMode ? "var(--button-bg)" : "transparent",
-              color: compactMode
-                ? "var(--button-text)"
-                : darkMode
-                ? "#f8fafc"
-                : "#222",
-              border: "none",
-              borderRadius: "6px 0 0 6px",
-              padding: "0.4rem 0.7rem",
-              cursor: "pointer",
-              fontSize: "1.4rem",
-              transition: "background 0.2s, color 0.2s",
-            }}
-          >
-            <MdViewModule />
-          </button>
-          <button
-            aria-label="List view"
-            onClick={() => handleCompactToggle(false)}
-            style={{
-              background: !compactMode ? "var(--button-bg)" : "transparent",
-              color: !compactMode
-                ? "var(--button-text)"
-                : darkMode
-                ? "#f8fafc"
-                : "#222",
-              border: "none",
-              borderRadius: "0 6px 6px 0",
-              padding: "0.4rem 0.7rem",
-              cursor: "pointer",
-              fontSize: "1.4rem",
-              transition: "background 0.2s, color 0.2s",
-            }}
-          >
-            <MdViewList />
-          </button>
         </div>
       </div>
       {/* Main Content */}

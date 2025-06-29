@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ThemeContext } from "../ThemeContext";
 import { MdViewModule, MdViewList, MdEdit, MdDelete } from "react-icons/md";
@@ -63,12 +63,26 @@ const JobList = ({ compactMode }) => {
   const [deleting, setDeleting] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
 
+  // Infinite scroll state
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef();
+
+  // Reset jobs when sort/search changes
+  useEffect(() => {
+    setJobs([]);
+    setPage(1);
+    setHasMore(true);
+  }, [sort, search]);
+
   useEffect(() => {
     const fetchJobs = async () => {
       setLoading(true);
       try {
         const params = new URLSearchParams();
         params.append("sort", sortToApi[sort]);
+        params.append("page", page);
+        params.append("limit", 20); // Adjust page size as needed
         if (search) params.append("q", search);
         const res = await fetch(
           `http://localhost:3000/api/jobs?${params.toString()}`
@@ -77,7 +91,8 @@ const JobList = ({ compactMode }) => {
           throw new Error(`HTTP error! Status: ${res.status}`);
         }
         const data = await res.json();
-        setJobs(data.data || []);
+        setJobs(prev => page === 1 ? (data.data || []) : [...prev, ...(data.data || [])]);
+        setHasMore(data.data && data.data.length > 0 && page < data.meta.pages);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -86,7 +101,22 @@ const JobList = ({ compactMode }) => {
     };
 
     fetchJobs();
-  }, [sort, search]);
+  }, [sort, search, page]);
+
+  // Infinite scroll observer
+  const lastJobRef = useCallback(
+    node => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new window.IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage(prev => prev + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
 
   const handleSortChange = (e) => setSort(e.target.value);
 
@@ -115,9 +145,6 @@ const JobList = ({ compactMode }) => {
       setDeleting(false);
     }
   };
-
-  if (loading) return <div>Loading jobs...</div>;
-  if (error) return <div>Error loading jobs: {error}</div>;
 
   return (
     <div>
@@ -208,7 +235,12 @@ const JobList = ({ compactMode }) => {
         </div>
       </div>
       {/* Main Content */}
-      {jobs.length === 0 ? (
+      {error && (
+        <div style={{ color: "#b91c1c", marginBottom: "1rem" }}>
+          Error loading jobs: {error}
+        </div>
+      )}
+      {jobs.length === 0 && !loading ? (
         <div style={{ margin: "2rem 0", textAlign: "center", color: "#888" }}>
           {search ? (
             <>
@@ -243,7 +275,7 @@ const JobList = ({ compactMode }) => {
             gap: "1rem",
           }}
         >
-          {jobs.map((job) => (
+          {jobs.map((job, idx) => (
             <JobCompactCard
               key={job.id}
               job={job}
@@ -252,12 +284,13 @@ const JobList = ({ compactMode }) => {
                 setSelectedJob(job);
               }}
               onDelete={setDeleteJobId}
+              ref={idx === jobs.length - 1 ? lastJobRef : undefined}
             />
           ))}
         </div>
       ) : (
         <ul style={{ listStyle: "none", padding: 0 }}>
-          {jobs.map((job) => (
+          {jobs.map((job, idx) => (
             <JobRowCard
               key={job.id}
               job={job}
@@ -267,9 +300,14 @@ const JobList = ({ compactMode }) => {
                 setSelectedJob(job);
               }}
               onDelete={setDeleteJobId}
+              ref={idx === jobs.length - 1 ? lastJobRef : undefined}
             />
           ))}
         </ul>
+      )}
+      {/* Show loading spinner/message at the bottom */}
+      {loading && (
+        <div style={{ textAlign: "center", margin: "1rem" }}>Loading...</div>
       )}
       <DeleteJobModal
         open={!!deleteJobId}

@@ -1,11 +1,16 @@
+import React from "react";
 import JobTags from "./JobTags";
 import JobStatusBadge from "./JobStatusBadge";
 import JobEditDeleteButtons from "./JobEditDeleteButtons";
 
-function JobRowCard({ job, darkMode, onSelect, onDelete }) {
+const JobRowCard = React.forwardRef(function JobRowCard(
+  { job, darkMode, onSelect, onDelete },
+  ref
+) {
   return (
     <li
       key={job.id}
+      ref={ref}
       onClick={onSelect}
       style={{
         background: "var(--card-bg)",
@@ -92,6 +97,6 @@ function JobRowCard({ job, darkMode, onSelect, onDelete }) {
       </div>
     </li>
   );
-}
+});
 
 export default JobRowCard;

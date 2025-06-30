@@ -97,21 +97,35 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
       </button>
       {/* Sidebar Footer */}
-      <div style={{
-        marginTop: "auto",
-        textAlign: "center",
-        fontSize: 13,
-        opacity: 0.8,
-        display: collapsed ? "none" : "block"
-      }}>
+      <div
+        style={{
+          marginTop: "auto",
+          textAlign: "center",
+          fontSize: 13,
+          opacity: 0.8,
+          paddingBottom: "3rem",
+        }}
+      >
         <a
           href="https://github.com/LLOKAI"
           target="_blank"
           rel="noopener noreferrer"
-          style={{ color: "inherit", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6 }}
+          style={{
+            color: "inherit",
+            textDecoration: "none",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            justifyContent: "center",
+          }}
+          title="GitHub"
         >
-          <FaGithub size={18} style={{ verticalAlign: "middle" }} />
-          <span>created by <b>LLOKAI</b></span>
+          <FaGithub size={30} style={{ verticalAlign: "middle" }} />
+          {!collapsed && (
+            <span>
+              created by <b>LLOKAI</b>
+            </span>
+          )}
         </a>
       </div>
     </aside>

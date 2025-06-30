@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaTachometerAlt, FaPlus, FaCog, FaChevronLeft, FaChevronRight, FaGithub } from "react-icons/fa";
-import Logo from "./Logo";
 
 const navLinks = [
   { name: "Dashboard", path: "/dashboard", icon: <FaTachometerAlt /> },
@@ -9,15 +8,19 @@ const navLinks = [
   { name: "Settings", path: "/settings", icon: <FaCog /> },
 ];
 
-export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+export default function Sidebar({ collapsed, setCollapsed }) {
+  const [hovered, setHovered] = useState(null);
   const location = useLocation();
   const activePath = location.pathname;
 
   return (
     <aside
       style={{
+        position: "fixed", // changed from relative
+        top: 72,           // header height in px
+        left: 0,
         width: collapsed ? 60 : 180,
+        height: "calc(100vh - 72px)", // full viewport minus header
         background: "var(--sidebar-bg)",
         color: "var(--sidebar-text)",
         padding: collapsed ? "1.5rem 0.5rem" : "1.5rem",
@@ -26,41 +29,48 @@ export default function Sidebar() {
         gap: "1.5rem",
         alignItems: collapsed ? "center" : "stretch",
         transition: "width 0.2s",
-        position: "relative",
+        zIndex: 101, // above main content, below header
+        marginTop: 0,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0
       }}
     >
-      <div>
-        {!collapsed && <Logo />}
-        <nav>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {navLinks.map(link => (
-              <li key={link.name} style={{ marginBottom: "0.5rem" }}>
-                <Link
-                  to={link.path}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: collapsed ? 0 : 12,
-                    justifyContent: collapsed ? "center" : "flex-start",
-                    padding: collapsed ? "0.6rem" : "0.6rem 1rem",
-                    borderRadius: "4px",
-                    backgroundColor: activePath === link.path ? "var(--link-active-bg)" : "transparent",
-                    color: "var(--button-text)",
-                    fontWeight: activePath === link.path ? "600" : "400",
-                    textDecoration: "none",
-                    transition: "background-color 0.3s",
-                    fontSize: 18,
-                  }}
-                  title={link.name}
-                >
-                  {link.icon}
-                  {!collapsed && <span style={{ marginLeft: 10 }}>{link.name}</span>}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
+      <nav>
+        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          {navLinks.map(link => (
+            <li key={link.name} style={{ marginBottom: "0.5rem" }}>
+              <Link
+                to={link.path}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: collapsed ? 0 : 12,
+                  justifyContent: collapsed ? "center" : "flex-start",
+                  padding: collapsed ? "0.6rem" : "0.6rem 1rem",
+                  borderRadius: "4px",
+                  backgroundColor:
+                    activePath === link.path
+                      ? "var(--link-active-bg)"
+                      : hovered === link.name
+                        ? "var(--link-hover-bg)"
+                        : "transparent",
+                  color: "var(--button-text)",
+                  fontWeight: activePath === link.path ? "600" : "400",
+                  textDecoration: "none",
+                  transition: "background-color 0.3s",
+                  fontSize: 18,
+                }}
+                title={link.name}
+                onMouseEnter={() => setHovered(link.name)}
+                onMouseLeave={() => setHovered(null)}
+              >
+                {link.icon}
+                {!collapsed && <span style={{ marginLeft: 10 }}>{link.name}</span>}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
       {/* Toggle button */}
       <button
         onClick={() => setCollapsed(c => !c)}

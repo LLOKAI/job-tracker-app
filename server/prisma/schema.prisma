@@ -15,7 +15,7 @@ enum ApplicationStatus {
 }
 
 model JobApplication {
-  id           String            @id @default(uuid())
+  id           String                @id @default(uuid())
   company      String
   position     String
   status       ApplicationStatus
@@ -24,5 +24,15 @@ model JobApplication {
   tags         String[]
   notes        String?
   url          String?
-  createdAt    DateTime          @default(now())
+  createdAt    DateTime              @default(now())
+  statusTransitions JobStatusTransition[]
+}
+
+model JobStatusTransition {
+  id        String   @id @default(uuid())
+  jobId     String
+  from      ApplicationStatus
+  to        ApplicationStatus
+  changedAt DateTime @default(now())
+  job       JobApplication @relation(fields: [jobId], references: [id], onDelete: Cascade)
 }

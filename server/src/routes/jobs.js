@@ -129,13 +129,23 @@ router.put('/:id', async (req, res) => {
   }
 
   try {
-    // Check if job exists
     const existing = await prisma.jobApplication.findUnique({ where: { id } });
     if (!existing) {
       return res.status(404).json({ error: 'Job not found' });
     }
 
     const data = parse.data;
+
+    // If status changed, record transition
+    if (existing.status !== data.status) {
+      await prisma.jobStatusTransition.create({
+        data: {
+          jobId: id,
+          from: existing.status,
+          to: data.status,
+        }
+      });
+    }
 
     const updatedJob = await prisma.jobApplication.update({
       where: { id },
@@ -176,7 +186,15 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-
+// GET /api/jobs/transitions/all - fetch all status transitions
+router.get('/transitions/all', async (req, res) => {
+  try {
+    const transitions = await prisma.jobStatusTransition.findMany();
+    res.json({ data: transitions });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch transitions' });
+  }
+});
 
 
 

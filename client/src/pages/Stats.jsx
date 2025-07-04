@@ -31,6 +31,8 @@ export default function Stats() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalChart, setModalChart] = useState(null);
+  const [transitions, setTransitions] = useState([]);
+  const [showAllTime, setShowAllTime] = useState(false);
 
   useEffect(() => {
     async function fetchJobs() {
@@ -46,14 +48,31 @@ export default function Stats() {
       }
     }
     fetchJobs();
+
+    // Fetch transitions
+    fetch("http://localhost:3000/api/jobs/transitions/all")
+      .then((res) => res.json())
+      .then((data) => setTransitions(data.data || []))
+      .catch(() => setTransitions([]));
   }, []);
 
   // Compute stats
   const total = jobs.length;
-  const byStatus = jobs.reduce((acc, job) => {
+  // For current stats:
+  const currentByStatus = jobs.reduce((acc, job) => {
     acc[job.status] = (acc[job.status] || 0) + 1;
     return acc;
   }, {});
+
+  // For all-time stats:
+  const allTimeByStatus = transitions.reduce((acc, tr) => {
+    acc[tr.to] = (acc[tr.to] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Use this for your charts:
+  const byStatus = showAllTime ? allTimeByStatus : currentByStatus;
+
   const appliedThisWeek = jobs.filter((j) => {
     const d = new Date(j.appliedDate);
     const now = new Date();
@@ -123,6 +142,30 @@ export default function Stats() {
     ).length,
   }));
 
+  // Sankey data from transitions
+  const sankeyNodes = [
+    { id: "Applied" },
+    { id: "Interview" },
+    { id: "Offer" },
+    { id: "Rejected" },
+  ];
+  const sankeyLinks = [];
+  const transitionCounts = {};
+
+  transitions.forEach((tr) => {
+    const from = statusLabels[tr.from] || tr.from;
+    const to = statusLabels[tr.to] || tr.to;
+    const key = `${from}->${to}`;
+    transitionCounts[key] = (transitionCounts[key] || 0) + 1;
+  });
+
+  Object.entries(transitionCounts).forEach(([key, value]) => {
+    const [from, to] = key.split("->");
+    sankeyLinks.push({ source: from, target: to, value });
+  });
+
+  const sankeyData = { nodes: sankeyNodes, links: sankeyLinks };
+
   // Modal chart rendering
   function renderModalChart() {
     if (!modalChart) return null;
@@ -185,32 +228,6 @@ export default function Stats() {
         </ResponsiveContainer>
       );
     } else if (modalChart === "sankey") {
-      // Sankey chart data preparation
-      const sankeyData = {
-        nodes: [
-          { id: "Applied" },
-          { id: "Interview" },
-          { id: "Offer" },
-          { id: "Rejected" },
-        ],
-        links: [
-          {
-            source: "Applied",
-            target: "Interview",
-            value: byStatus.INTERVIEW || 0,
-          },
-          {
-            source: "Interview",
-            target: "Offer",
-            value: byStatus.OFFER || 0,
-          },
-          {
-            source: "Interview",
-            target: "Rejected",
-            value: byStatus.REJECTED || 0,
-          },
-        ],
-      };
       content = (
         <div style={{ height: 400 }}>
           <ResponsiveSankey
@@ -324,6 +341,26 @@ export default function Stats() {
             ]}
             darkMode={darkMode}
           />
+
+          {/* Toggle button for all-time/current stats */}
+          <div style={{ textAlign: "right", marginBottom: 12 }}>
+            <button
+              onClick={() => setShowAllTime((v) => !v)}
+              style={{
+                background: showAllTime ? "#3b82f6" : "#e5e7eb",
+                color: showAllTime ? "#fff" : "#222",
+                border: "none",
+                borderRadius: 6,
+                padding: "0.4rem 1rem",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              {showAllTime
+                ? "Show Current Stats"
+                : "Show All-Time Stats"}
+            </button>
+          </div>
 
           {/* Advanced charts row */}
           <div

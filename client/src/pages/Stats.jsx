@@ -15,6 +15,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import { ResponsiveSankey } from "@nivo/sankey";
 
 const statusLabels = {
   APPLIED: "Applied",
@@ -183,6 +184,49 @@ export default function Stats() {
           </LineChart>
         </ResponsiveContainer>
       );
+    } else if (modalChart === "sankey") {
+      // Sankey chart data preparation
+      const sankeyData = {
+        nodes: [
+          { id: "Applied" },
+          { id: "Interview" },
+          { id: "Offer" },
+          { id: "Rejected" },
+        ],
+        links: [
+          {
+            source: "Applied",
+            target: "Interview",
+            value: byStatus.INTERVIEW || 0,
+          },
+          {
+            source: "Interview",
+            target: "Offer",
+            value: byStatus.OFFER || 0,
+          },
+          {
+            source: "Interview",
+            target: "Rejected",
+            value: byStatus.REJECTED || 0,
+          },
+        ],
+      };
+      content = (
+        <div style={{ height: 400 }}>
+          <ResponsiveSankey
+            data={sankeyData}
+            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+            colors={chartColors}
+            nodeOpacity={0.9}
+            linkOpacity={0.6}
+            enableLinkGradient={true}
+            labelPosition="inside"
+            nodeWidth={18}
+            nodePadding={6}
+            onClick={(node) => console.log(node)}
+          />
+        </div>
+      );
     }
     return (
       <div
@@ -256,6 +300,7 @@ export default function Stats() {
               gap: 32,
               flexWrap: "wrap",
               marginBottom: 32,
+              justifyContent: "center", // Center the cards horizontally
             }}
           >
             <StatCard label="Total Applications" value={total} />
@@ -414,6 +459,69 @@ export default function Stats() {
                   />
                 </LineChart>
               </ResponsiveContainer>
+            </div>
+            {/* Sankey Chart */}
+            <div
+              style={{
+                flex: 1,
+                minWidth: 320,
+                background: darkMode ? "#23263a" : "#e5e7eb",
+                borderRadius: 12,
+                padding: 16,
+                cursor: "pointer",
+                transition: "box-shadow 0.2s",
+                boxShadow: "0 1px 6px rgba(0,0,0,0.10)",
+              }}
+              title="Click to expand"
+              onClick={() => setModalChart("sankey")}
+            >
+              <h3
+                style={{
+                  textAlign: "center",
+                  margin: 0,
+                  marginBottom: 8,
+                }}
+              >
+                Application Flow
+              </h3>
+              <div style={{ height: 220 }}>
+                <ResponsiveSankey
+                  data={{
+                    nodes: [
+                      { id: "Applied" },
+                      { id: "Interview" },
+                      { id: "Offer" },
+                      { id: "Rejected" },
+                    ],
+                    links: [
+                      {
+                        source: "Applied",
+                        target: "Interview",
+                        value: byStatus.INTERVIEW || 0,
+                      },
+                      {
+                        source: "Interview",
+                        target: "Offer",
+                        value: byStatus.OFFER || 0,
+                      },
+                      {
+                        source: "Interview",
+                        target: "Rejected",
+                        value: byStatus.REJECTED || 0,
+                      },
+                    ],
+                  }}
+                  margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+                  colors={chartColors}
+                  nodeOpacity={0.9}
+                  linkOpacity={0.6}
+                  enableLinkGradient={true}
+                  labelPosition="inside"
+                  nodeWidth={18}
+                  nodePadding={6}
+                  onClick={(node) => console.log(node)}
+                />
+              </div>
             </div>
           </div>
 

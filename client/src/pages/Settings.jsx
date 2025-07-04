@@ -54,6 +54,14 @@ const fieldStyle = {
   gap: 4,
 };
 
+const labelStyle = {
+  fontWeight: 500,
+  textAlign: "center",
+  display: "block",
+  fontSize: "1rem",
+  marginBottom: 6,
+};
+
 export default function Settings() {
   const { darkMode, setDarkMode } = useContext(ThemeContext);
   const { name, setName } = useContext(UserContext);
@@ -112,7 +120,7 @@ export default function Settings() {
         {/* Name & Email */}
         <div style={rowStyle}>
           <div style={fieldStyle}>
-            <label style={{ fontWeight: 500 }}>Name</label>
+            <label style={labelStyle}>Name</label>
             <input
               type="text"
               value={name}
@@ -121,7 +129,7 @@ export default function Settings() {
             />
           </div>
           <div style={fieldStyle}>
-            <label style={{ fontWeight: 500 }}>Email</label>
+            <label style={labelStyle}>Email</label>
             <input
               type="email"
               value={email}
@@ -133,7 +141,7 @@ export default function Settings() {
         {/* Default Status & Sort */}
         <div style={rowStyle}>
           <div style={fieldStyle}>
-            <label style={{ fontWeight: 500 }}>Default Job Status</label>
+            <label style={labelStyle}>Default Job Status</label>
             <select
               value={defaultStatus}
               onChange={e => setDefaultStatus(e.target.value)}
@@ -146,7 +154,7 @@ export default function Settings() {
             </select>
           </div>
           <div style={fieldStyle}>
-            <label style={{ fontWeight: 500 }}>Default Sort Order</label>
+            <label style={labelStyle}>Default Sort Order</label>
             <select
               value={defaultSort}
               onChange={e => setDefaultSort(e.target.value)}
@@ -161,7 +169,7 @@ export default function Settings() {
         {/* Font Size */}
         <div style={rowStyle}>
           <div style={fieldStyle}>
-            <label style={{ fontWeight: 500 }}>Font Size</label>
+            <label style={labelStyle}>Font Size</label>
             <select
               value={fontSize}
               onChange={e => setFontSize(e.target.value)}
@@ -176,7 +184,7 @@ export default function Settings() {
         {/* Compact, Dark, Notifications */}
         <div style={{ ...rowStyle, justifyContent: "center" }}>
           <div style={fieldStyle}>
-            <label style={{ fontWeight: 500, marginBottom: 6 }}>Compact Mode</label>
+            <label style={labelStyle}>Compact Mode</label>
             <div style={{ display: "flex", gap: 0 }}>
               <button
                 type="button"
@@ -185,7 +193,7 @@ export default function Settings() {
                 style={getButtonStyle(compactMode, darkMode)}
               >
                 <MdViewModule />
-                Grid
+                <span style={{ fontSize: "1rem", fontWeight: 500, marginLeft: 4 }}>Grid</span>
               </button>
               <button
                 type="button"
@@ -194,12 +202,12 @@ export default function Settings() {
                 style={getButtonStyle(!compactMode, darkMode)}
               >
                 <MdViewList />
-                List
+                <span style={{ fontSize: "1rem", fontWeight: 500, marginLeft: 4 }}>List</span>
               </button>
             </div>
           </div>
           <div style={fieldStyle}>
-            <label style={{ fontWeight: 500, marginBottom: 6 }}>Dark Mode</label>
+            <label style={labelStyle}>Dark Mode</label>
             <div style={{ display: "flex", gap: 0 }}>
               <button
                 type="button"
@@ -208,7 +216,7 @@ export default function Settings() {
                 style={getButtonStyle(darkMode, darkMode)}
               >
                 <MdDarkMode />
-                Dark
+                <span style={{ fontSize: "1rem", fontWeight: 500, marginLeft: 4 }}>Dark</span>
               </button>
               <button
                 type="button"
@@ -217,27 +225,29 @@ export default function Settings() {
                 style={getButtonStyle(!darkMode, darkMode)}
               >
                 <MdLightMode />
-                Light
+                <span style={{ fontSize: "1rem", fontWeight: 500, marginLeft: 4 }}>Light</span>
               </button>
             </div>
           </div>
           <div style={fieldStyle}>
-            <label style={{ fontWeight: 500, marginBottom: 6 }}>Enable Notifications</label>
-            <button
-              type="button"
-              aria-label="Toggle notifications"
-              onClick={() => setNotifications(n => !n)}
-              style={{
-                ...getButtonStyle(notifications, darkMode),
-                fontSize: "1.5rem",
-                borderRadius: "50%",
-                width: 44,
-                height: 44,
-                justifyContent: "center",
-              }}
-            >
-              {notifications ? <MdNotificationsActive /> : <MdNotificationsNone />}
-            </button>
+            <label style={labelStyle}>Enable Notifications</label>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <button
+                type="button"
+                aria-label="Toggle notifications"
+                onClick={() => setNotifications(n => !n)}
+                style={{
+                  ...getButtonStyle(notifications, darkMode),
+                  fontSize: "1.5rem",
+                  borderRadius: "50%",
+                  width: 44,
+                  height: 44,
+                  justifyContent: "center",
+                }}
+              >
+                {notifications ? <MdNotificationsActive /> : <MdNotificationsNone />}
+              </button>
+            </div>
           </div>
         </div>
         {/* Save Button */}

@@ -14,8 +14,8 @@ const tabs = [
 const sidebarStyle = (darkMode) => ({
   minWidth: 200,
   borderRight: `1px solid ${darkMode ? "#334155" : "#e5e7eb"}`,
-  background: darkMode ? "#1e293b" : "#f9fafb",
-  padding: "2rem 0 2rem 2rem",
+  background: darkMode ? "#0f172a" : "#f4f6f8",
+  padding: "2rem 1.5rem 2rem 2rem", // Add right padding
   height: "100%",
   display: "flex",
   flexDirection: "column",
@@ -358,6 +358,9 @@ export default function Settings() {
     );
   }
 
+  // Helper to get current tab label
+  const currentTabLabel = tabs.find(tab => tab.key === activeTab)?.label || "";
+
   // --- Main Layout ---
   return (
     <div style={{
@@ -389,6 +392,24 @@ export default function Settings() {
         margin: "0 auto",
         background: darkMode ? "#0f172a" : "#f4f6f8",
       }}>
+        {/* Dynamic Title and Divider */}
+        <div style={{ marginBottom: 32 }}>
+          <h2 style={{
+            margin: 0,
+            fontSize: 28,
+            fontWeight: 700,
+            color: darkMode ? "#fff" : "#222",
+            letterSpacing: 0.2,
+            textTransform: "capitalize"
+          }}>
+            {currentTabLabel}
+          </h2>
+          <div style={{
+            height: 1,
+            background: darkMode ? "#334155" : "#e5e7eb",
+            margin: "16px 0 0 0"
+          }} />
+        </div>
         {activeTab === "profile" && renderProfile()}
         {activeTab === "preferences" && renderPreferences()}
         {activeTab === "notifications" && renderNotifications()}

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaTachometerAlt, FaPlus, FaCog, FaChevronLeft, FaChevronRight, FaGithub } from "react-icons/fa";
+import { FaTachometerAlt, FaPlus, FaCog, FaChevronLeft, FaChevronRight, FaGithub, FaChartBar, FaBell, FaTools } from "react-icons/fa";
 
 const navLinks = [
   { name: "Dashboard", path: "/dashboard", icon: <FaTachometerAlt /> },
   { name: "Add Job", path: "/jobs/new", icon: <FaPlus /> },
+  { name: "Stats", path: "/stats", icon: <FaChartBar /> },         // Stats/Analytics page
+  { name: "Reminders", path: "/reminders", icon: <FaBell /> },     // Reminders/follow-ups
+  { name: "Tools", path: "/tools", icon: <FaTools /> },            // Tools/games/AI helpers
   { name: "Settings", path: "/settings", icon: <FaCog /> },
 ];
 

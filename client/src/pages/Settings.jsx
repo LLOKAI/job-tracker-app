@@ -1,13 +1,16 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { ThemeContext } from '../ThemeContext';
 import { UserContext } from '../UserContext';
-import { MdPerson, MdTune, MdNotifications, MdPalette, MdExtension, MdViewModule, MdViewList, MdDarkMode, MdLightMode, MdNotificationsActive, MdNotificationsNone } from "react-icons/md";
+import { MdPerson, MdTune, MdNotifications, MdPalette, MdExtension, MdViewModule, MdViewList, MdDarkMode, MdLightMode, MdNotificationsActive, MdNotificationsNone, MdSecurity, MdBackup, MdBrush } from "react-icons/md";
 
 const tabs = [
   { key: "profile", label: "Profile", icon: <MdPerson /> },
   { key: "preferences", label: "Preferences", icon: <MdTune /> },
   { key: "notifications", label: "Notifications", icon: <MdNotifications /> },
   { key: "appearance", label: "Appearance", icon: <MdPalette /> },
+  { key: "personalization", label: "Personalization", icon: <MdBrush /> },
+  { key: "security", label: "Security", icon: <MdSecurity /> },
+  { key: "export", label: "Export/Backup", icon: <MdBackup /> },
   { key: "integrations", label: "Integrations", icon: <MdExtension /> },
 ];
 
@@ -261,15 +264,17 @@ export default function Settings() {
               background: notifications ? "#3b82f6" : (darkMode ? "#334155" : "#e5e7eb"),
               color: notifications ? "#fff" : (darkMode ? "#f8fafc" : "#222"),
               borderRadius: "50%",
-              width: 44,
-              height: 44,
-              fontSize: "1.5rem",
+              width: 56, // increased size
+              height: 56, // increased size
+              fontSize: "2rem", // increased font size
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            {notifications ? <MdNotificationsActive /> : <MdNotificationsNone />}
+            {notifications
+              ? <MdNotificationsActive size={32} />
+              : <MdNotificationsNone size={32} />}
           </button>
         </div>
         <button type="submit" style={buttonStyle(darkMode)}>Save Notification Settings</button>
@@ -358,6 +363,74 @@ export default function Settings() {
     );
   }
 
+  function renderSecurity() {
+    return (
+      <form style={{ maxWidth: 500 }}>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Change Password</div>
+          <div style={descStyle}>Update your account password.</div>
+          <input type="password" placeholder="Current password" style={inputStyle(darkMode)} disabled />
+          <input type="password" placeholder="New password" style={inputStyle(darkMode)} disabled />
+          <button type="button" style={buttonStyle(darkMode)} disabled>Change Password</button>
+        </div>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Two-Factor Authentication</div>
+          <div style={descStyle}>Add an extra layer of security to your account.</div>
+          <button type="button" style={buttonStyle(darkMode)} disabled>Enable 2FA</button>
+        </div>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Active Sessions</div>
+          <div style={descStyle}>Manage devices logged into your account.</div>
+          <ul>
+            <li>Chrome on Windows 10 <button style={{ marginLeft: 8 }} disabled>Revoke</button></li>
+            <li>Safari on iPhone <button style={{ marginLeft: 8 }} disabled>Revoke</button></li>
+          </ul>
+        </div>
+      </form>
+    );
+  }
+
+  function renderExport() {
+    return (
+      <div style={{ maxWidth: 500 }}>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Export Data</div>
+          <div style={descStyle}>Download your job applications as CSV or JSON.</div>
+          <button type="button" style={buttonStyle(darkMode)} disabled>Export as CSV</button>
+          <button type="button" style={{ ...buttonStyle(darkMode), marginLeft: 8 }} disabled>Export as JSON</button>
+        </div>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Import Backup</div>
+          <div style={descStyle}>Restore your data from a backup file.</div>
+          <input type="file" style={inputStyle(darkMode)} disabled />
+          <button type="button" style={buttonStyle(darkMode)} disabled>Import</button>
+        </div>
+      </div>
+    );
+  }
+
+  function renderPersonalization() {
+    return (
+      <form style={{ maxWidth: 500 }}>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Profile Picture</div>
+          <div style={descStyle}>Upload or select an avatar for your profile.</div>
+          <input type="file" style={inputStyle(darkMode)} disabled />
+        </div>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Accent Color</div>
+          <div style={descStyle}>Choose a highlight color for the app.</div>
+          <input type="color" style={{ ...inputStyle(darkMode), width: 50, height: 30, padding: 0 }} disabled />
+        </div>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Dashboard Quote</div>
+          <div style={descStyle}>Set a custom motivational quote for your dashboard.</div>
+          <input type="text" placeholder="Your quote..." style={inputStyle(darkMode)} disabled />
+        </div>
+      </form>
+    );
+  }
+
   // Helper to get current tab label
   const currentTabLabel = tabs.find(tab => tab.key === activeTab)?.label || "";
 
@@ -414,6 +487,9 @@ export default function Settings() {
         {activeTab === "preferences" && renderPreferences()}
         {activeTab === "notifications" && renderNotifications()}
         {activeTab === "appearance" && renderAppearance()}
+        {activeTab === "personalization" && renderPersonalization()}
+        {activeTab === "security" && renderSecurity()}
+        {activeTab === "export" && renderExport()}
         {activeTab === "integrations" && renderIntegrations()}
         {/* Save Confirmation Modal */}
         {saveStatus && (

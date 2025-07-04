@@ -1,18 +1,61 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { ThemeContext } from '../ThemeContext';
 import { UserContext } from '../UserContext';
-import { MdViewModule, MdViewList, MdDarkMode, MdLightMode, MdNotificationsActive, MdNotificationsNone } from "react-icons/md";
+import { MdPerson, MdTune, MdNotifications, MdPalette, MdExtension, MdViewModule, MdViewList, MdDarkMode, MdLightMode, MdNotificationsActive, MdNotificationsNone } from "react-icons/md";
 
-const getFormContainerStyle = (darkMode) => ({
-  background: darkMode ? "#1e293b" : "#ffffff",
-  padding: "2rem",
-  borderRadius: "8px",
-  boxShadow: darkMode ? "0 2px 8px rgba(0, 0, 0, 0.7)" : "0 2px 8px rgba(0, 0, 0, 0.1)",
-  maxWidth: "600px",
-  margin: "2rem auto",
+const tabs = [
+  { key: "profile", label: "Profile", icon: <MdPerson /> },
+  { key: "preferences", label: "Preferences", icon: <MdTune /> },
+  { key: "notifications", label: "Notifications", icon: <MdNotifications /> },
+  { key: "appearance", label: "Appearance", icon: <MdPalette /> },
+  { key: "integrations", label: "Integrations", icon: <MdExtension /> },
+];
+
+const sidebarStyle = (darkMode) => ({
+  minWidth: 200,
+  borderRight: `1px solid ${darkMode ? "#334155" : "#e5e7eb"}`,
+  background: darkMode ? "#1e293b" : "#f9fafb",
+  padding: "2rem 0 2rem 2rem",
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
+  gap: 8,
 });
 
-const getInputStyle = (darkMode) => ({
+const tabButtonStyle = (active, darkMode) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: 12,
+  background: active ? (darkMode ? "#334155" : "#e5e7eb") : "transparent",
+  color: active ? (darkMode ? "#fff" : "#222") : (darkMode ? "#cbd5e1" : "#222"),
+  border: "none",
+  borderRadius: 6,
+  padding: "0.7rem 1rem",
+  fontWeight: active ? 600 : 500,
+  fontSize: "1rem",
+  cursor: "pointer",
+  textAlign: "left",
+  transition: "background 0.15s, color 0.15s",
+});
+
+const sectionStyle = {
+  marginBottom: "2.5rem",
+};
+
+const labelStyle = {
+  fontWeight: 500,
+  fontSize: "1rem",
+  marginBottom: 4,
+  display: "block",
+};
+
+const descStyle = {
+  color: "#64748b",
+  fontSize: "0.97rem",
+  marginBottom: 10,
+};
+
+const inputStyle = (darkMode) => ({
   padding: "0.6rem 0.8rem",
   borderRadius: "6px",
   border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
@@ -21,52 +64,29 @@ const getInputStyle = (darkMode) => ({
   backgroundColor: darkMode ? "#334155" : "#ffffff",
   color: darkMode ? "#f8fafc" : "#222222",
   minWidth: 0,
-  flex: 1,
+  marginBottom: 12,
 });
 
-const getButtonStyle = (active, darkMode) => ({
-  background: active ? "var(--button-bg)" : "transparent",
-  color: active ? "var(--button-text)" : (darkMode ? "#f8fafc" : "#222"),
+const buttonStyle = (darkMode) => ({
+  padding: "0.7rem 1.2rem",
+  borderRadius: 6,
   border: "none",
-  borderRadius: "6px",
-  padding: "0.4rem 0.7rem",
+  background: "#3b82f6",
+  color: "#fff",
+  fontWeight: 600,
+  fontSize: 16,
   cursor: "pointer",
-  fontSize: "1.4rem",
-  transition: "background 0.2s, color 0.2s",
-  display: "flex",
-  alignItems: "center",
-  gap: 6,
+  marginTop: 8,
 });
-
-const rowStyle = {
-  display: "flex",
-  gap: "1.5rem",
-  flexWrap: "wrap",
-  alignItems: "center",
-  marginBottom: "1.2rem",
-};
-
-const fieldStyle = {
-  flex: 1,
-  minWidth: 180,
-  display: "flex",
-  flexDirection: "column",
-  gap: 4,
-};
-
-const labelStyle = {
-  fontWeight: 500,
-  textAlign: "center",
-  display: "block",
-  fontSize: "1rem",
-  marginBottom: 6,
-};
 
 export default function Settings() {
   const { darkMode, setDarkMode } = useContext(ThemeContext);
   const { name, setName } = useContext(UserContext);
 
-  // Load from localStorage or use default
+  // State for tabs
+  const [activeTab, setActiveTab] = useState("profile");
+
+  // Settings state (mock + real)
   const [email, setEmail] = useState(() => localStorage.getItem('settings_email') || '');
   const [defaultStatus, setDefaultStatus] = useState(() => localStorage.getItem('settings_defaultStatus') || 'APPLIED');
   const [defaultSort, setDefaultSort] = useState(() => localStorage.getItem('settings_defaultSort') || 'date');
@@ -81,7 +101,10 @@ export default function Settings() {
   });
   const [saveStatus, setSaveStatus] = useState(false);
 
-  // Effect to update font size CSS variable
+  // Mock settings
+  const [apiToken, setApiToken] = useState("sk-1234-xxxx");
+  const [slackIntegration, setSlackIntegration] = useState(false);
+
   useEffect(() => {
     let size;
     if (fontSize === 'small') size = '14px';
@@ -90,7 +113,6 @@ export default function Settings() {
     document.documentElement.style.setProperty('--font-size-base', size);
   }, [fontSize]);
 
-  // Save handler
   const handleSave = (e) => {
     e.preventDefault();
     localStorage.setItem('settings_name', name);
@@ -100,201 +122,304 @@ export default function Settings() {
     localStorage.setItem('settings_notifications', JSON.stringify(notifications));
     localStorage.setItem('settings_fontSize', fontSize);
     localStorage.setItem('settings_compactMode', JSON.stringify(compactMode));
-    setName(name); // Update context
+    setName(name);
     setSaveStatus(true);
     setTimeout(() => setSaveStatus(false), 1200);
   };
 
-  return (
-    <div style={getFormContainerStyle(darkMode)}>
-      <h2 style={{ marginBottom: '2rem', textAlign: "center" }}>Settings</h2>
-      <form
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: "center",
-          gap: 0,
-        }}
-        onSubmit={handleSave}
-      >
-        {/* Name & Email */}
-        <div style={rowStyle}>
-          <div style={fieldStyle}>
-            <label style={labelStyle}>Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              style={getInputStyle(darkMode)}
-            />
-          </div>
-          <div style={fieldStyle}>
-            <label style={labelStyle}>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              style={getInputStyle(darkMode)}
-            />
-          </div>
+  // --- Tab Content Renderers ---
+  function renderProfile() {
+    return (
+      <form onSubmit={handleSave} style={{ maxWidth: 500 }}>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Name</div>
+          <div style={descStyle}>This will be used for your greeting and profile.</div>
+          <input
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            style={inputStyle(darkMode)}
+          />
         </div>
-        {/* Default Status & Sort */}
-        <div style={rowStyle}>
-          <div style={fieldStyle}>
-            <label style={labelStyle}>Default Job Status</label>
-            <select
-              value={defaultStatus}
-              onChange={e => setDefaultStatus(e.target.value)}
-              style={getInputStyle(darkMode)}
-            >
-              <option value="APPLIED">Applied</option>
-              <option value="INTERVIEW">Interview</option>
-              <option value="REJECTED">Rejected</option>
-              <option value="OFFER">Offer</option>
-            </select>
-          </div>
-          <div style={fieldStyle}>
-            <label style={labelStyle}>Default Sort Order</label>
-            <select
-              value={defaultSort}
-              onChange={e => setDefaultSort(e.target.value)}
-              style={getInputStyle(darkMode)}
-            >
-              <option value="date">Date</option>
-              <option value="company">Company</option>
-              <option value="status">Status</option>
-            </select>
-          </div>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Email</div>
+          <div style={descStyle}>Used for notifications and account recovery.</div>
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            style={inputStyle(darkMode)}
+          />
         </div>
-        {/* Font Size */}
-        <div style={rowStyle}>
-          <div style={fieldStyle}>
-            <label style={labelStyle}>Font Size</label>
-            <select
-              value={fontSize}
-              onChange={e => setFontSize(e.target.value)}
-              style={getInputStyle(darkMode)}
-            >
-              <option value="small">Small</option>
-              <option value="medium">Medium</option>
-              <option value="large">Large</option>
-            </select>
-          </div>
-        </div>
-        {/* Compact, Dark, Notifications */}
-        <div style={{ ...rowStyle, justifyContent: "center" }}>
-          <div style={fieldStyle}>
-            <label style={labelStyle}>Compact Mode</label>
-            <div style={{ display: "flex", gap: 0 }}>
-              <button
-                type="button"
-                aria-label="Grid view"
-                onClick={() => setCompactMode(true)}
-                style={getButtonStyle(compactMode, darkMode)}
-              >
-                <MdViewModule />
-                <span style={{ fontSize: "1rem", fontWeight: 500, marginLeft: 4 }}>Grid</span>
-              </button>
-              <button
-                type="button"
-                aria-label="List view"
-                onClick={() => setCompactMode(false)}
-                style={getButtonStyle(!compactMode, darkMode)}
-              >
-                <MdViewList />
-                <span style={{ fontSize: "1rem", fontWeight: 500, marginLeft: 4 }}>List</span>
-              </button>
-            </div>
-          </div>
-          <div style={fieldStyle}>
-            <label style={labelStyle}>Dark Mode</label>
-            <div style={{ display: "flex", gap: 0 }}>
-              <button
-                type="button"
-                aria-label="Dark mode"
-                onClick={() => setDarkMode(true)}
-                style={getButtonStyle(darkMode, darkMode)}
-              >
-                <MdDarkMode />
-                <span style={{ fontSize: "1rem", fontWeight: 500, marginLeft: 4 }}>Dark</span>
-              </button>
-              <button
-                type="button"
-                aria-label="Light mode"
-                onClick={() => setDarkMode(false)}
-                style={getButtonStyle(!darkMode, darkMode)}
-              >
-                <MdLightMode />
-                <span style={{ fontSize: "1rem", fontWeight: 500, marginLeft: 4 }}>Light</span>
-              </button>
-            </div>
-          </div>
-          <div style={fieldStyle}>
-            <label style={labelStyle}>Enable Notifications</label>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <button
-                type="button"
-                aria-label="Toggle notifications"
-                onClick={() => setNotifications(n => !n)}
-                style={{
-                  ...getButtonStyle(notifications, darkMode),
-                  fontSize: "1.5rem",
-                  borderRadius: "50%",
-                  width: 44,
-                  height: 44,
-                  justifyContent: "center",
-                }}
-              >
-                {notifications ? <MdNotificationsActive /> : <MdNotificationsNone />}
-              </button>
-            </div>
-          </div>
-        </div>
-        {/* Save Button */}
-        <button
-          type="submit"
-          style={{
-            marginTop: 18,
-            padding: '0.75rem',
-            borderRadius: 6,
-            border: 'none',
-            background: '#3b82f6',
-            color: '#fff',
-            fontWeight: 600,
-            fontSize: 16,
-            cursor: 'pointer',
-            width: 160,
-            alignSelf: "center"
-          }}
-        >
-          Save
-        </button>
+        <button type="submit" style={buttonStyle(darkMode)}>Save Profile</button>
       </form>
-      {/* Save Confirmation Modal */}
-      {saveStatus && (
-        <div style={{
-          position: "fixed",
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: "rgba(0,0,0,0.25)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 2000,
-        }}>
-          <div style={{
-            background: darkMode ? "#23263a" : "#fff",
-            color: darkMode ? "#f8fafc" : "#222",
-            padding: "2rem 2.5rem",
-            borderRadius: 16,
-            boxShadow: "0 2px 24px rgba(0,0,0,0.22)",
-            fontSize: 22,
-            fontWeight: 600,
-            textAlign: "center",
-          }}>
-            Settings Saved!
+    );
+  }
+
+  function renderPreferences() {
+    return (
+      <form onSubmit={handleSave} style={{ maxWidth: 500 }}>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Default Job Status</div>
+          <div style={descStyle}>Choose the default status for new job applications.</div>
+          <select
+            value={defaultStatus}
+            onChange={e => setDefaultStatus(e.target.value)}
+            style={inputStyle(darkMode)}
+          >
+            <option value="APPLIED">Applied</option>
+            <option value="INTERVIEW">Interview</option>
+            <option value="REJECTED">Rejected</option>
+            <option value="OFFER">Offer</option>
+          </select>
+        </div>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Default Sort Order</div>
+          <div style={descStyle}>How jobs are sorted by default on your dashboard.</div>
+          <select
+            value={defaultSort}
+            onChange={e => setDefaultSort(e.target.value)}
+            style={inputStyle(darkMode)}
+          >
+            <option value="date">Date</option>
+            <option value="company">Company</option>
+            <option value="status">Status</option>
+          </select>
+        </div>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Font Size</div>
+          <div style={descStyle}>Adjust the base font size for the app.</div>
+          <select
+            value={fontSize}
+            onChange={e => setFontSize(e.target.value)}
+            style={inputStyle(darkMode)}
+          >
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+          </select>
+        </div>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Compact Mode</div>
+          <div style={descStyle}>Switch between grid and list layouts for your dashboard.</div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              type="button"
+              aria-label="Grid view"
+              onClick={() => setCompactMode(true)}
+              style={{
+                ...buttonStyle(darkMode),
+                background: compactMode ? "#3b82f6" : (darkMode ? "#334155" : "#e5e7eb"),
+                color: compactMode ? "#fff" : (darkMode ? "#f8fafc" : "#222"),
+                fontWeight: compactMode ? 700 : 500,
+                padding: "0.4rem 0.9rem",
+                fontSize: "1.1rem",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <MdViewModule /> Grid
+            </button>
+            <button
+              type="button"
+              aria-label="List view"
+              onClick={() => setCompactMode(false)}
+              style={{
+                ...buttonStyle(darkMode),
+                background: !compactMode ? "#3b82f6" : (darkMode ? "#334155" : "#e5e7eb"),
+                color: !compactMode ? "#fff" : (darkMode ? "#f8fafc" : "#222"),
+                fontWeight: !compactMode ? 700 : 500,
+                padding: "0.4rem 0.9rem",
+                fontSize: "1.1rem",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <MdViewList /> List
+            </button>
           </div>
         </div>
-      )}
+        <button type="submit" style={buttonStyle(darkMode)}>Save Preferences</button>
+      </form>
+    );
+  }
+
+  function renderNotifications() {
+    return (
+      <form onSubmit={handleSave} style={{ maxWidth: 500 }}>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Enable Notifications</div>
+          <div style={descStyle}>Receive email or in-app notifications for job updates.</div>
+          <button
+            type="button"
+            aria-label="Toggle notifications"
+            onClick={() => setNotifications(n => !n)}
+            style={{
+              ...buttonStyle(darkMode),
+              background: notifications ? "#3b82f6" : (darkMode ? "#334155" : "#e5e7eb"),
+              color: notifications ? "#fff" : (darkMode ? "#f8fafc" : "#222"),
+              borderRadius: "50%",
+              width: 44,
+              height: 44,
+              fontSize: "1.5rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {notifications ? <MdNotificationsActive /> : <MdNotificationsNone />}
+          </button>
+        </div>
+        <button type="submit" style={buttonStyle(darkMode)}>Save Notification Settings</button>
+      </form>
+    );
+  }
+
+  function renderAppearance() {
+    return (
+      <form onSubmit={handleSave} style={{ maxWidth: 500 }}>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Theme</div>
+          <div style={descStyle}>Switch between light and dark mode.</div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              type="button"
+              aria-label="Dark mode"
+              onClick={() => setDarkMode(true)}
+              style={{
+                ...buttonStyle(darkMode),
+                background: darkMode ? "#3b82f6" : (darkMode ? "#334155" : "#e5e7eb"),
+                color: darkMode ? "#fff" : (darkMode ? "#f8fafc" : "#222"),
+                fontWeight: darkMode ? 700 : 500,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <MdDarkMode /> Dark
+            </button>
+            <button
+              type="button"
+              aria-label="Light mode"
+              onClick={() => setDarkMode(false)}
+              style={{
+                ...buttonStyle(darkMode),
+                background: !darkMode ? "#3b82f6" : (darkMode ? "#334155" : "#e5e7eb"),
+                color: !darkMode ? "#fff" : (darkMode ? "#f8fafc" : "#222"),
+                fontWeight: !darkMode ? 700 : 500,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <MdLightMode /> Light
+            </button>
+          </div>
+        </div>
+        <button type="submit" style={buttonStyle(darkMode)}>Save Appearance</button>
+      </form>
+    );
+  }
+
+  function renderIntegrations() {
+    return (
+      <form onSubmit={e => { e.preventDefault(); setSaveStatus(true); setTimeout(() => setSaveStatus(false), 1200); }} style={{ maxWidth: 500 }}>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>API Token</div>
+          <div style={descStyle}>Use this token to access the Job Tracker API.</div>
+          <input
+            type="text"
+            value={apiToken}
+            onChange={e => setApiToken(e.target.value)}
+            style={inputStyle(darkMode)}
+            readOnly
+          />
+        </div>
+        <div style={sectionStyle}>
+          <div style={labelStyle}>Slack Integration</div>
+          <div style={descStyle}>Enable Slack notifications for job updates.</div>
+          <button
+            type="button"
+            onClick={() => setSlackIntegration(v => !v)}
+            style={{
+              ...buttonStyle(darkMode),
+              background: slackIntegration ? "#3b82f6" : (darkMode ? "#334155" : "#e5e7eb"),
+              color: slackIntegration ? "#fff" : (darkMode ? "#f8fafc" : "#222"),
+              fontWeight: slackIntegration ? 700 : 500,
+            }}
+          >
+            {slackIntegration ? "Disable Slack" : "Enable Slack"}
+          </button>
+        </div>
+        <button type="submit" style={buttonStyle(darkMode)}>Save Integrations</button>
+      </form>
+    );
+  }
+
+  // --- Main Layout ---
+  return (
+    <div style={{
+      display: "flex",
+      minHeight: "calc(100vh - 72px)",
+      background: darkMode ? "#0f172a" : "#f4f6f8",
+    }}>
+      {/* Sidebar */}
+      <nav style={sidebarStyle(darkMode)}>
+        <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18, color: darkMode ? "#fff" : "#222" }}>
+          Settings
+        </h3>
+        {tabs.map(tab => (
+          <button
+            key={tab.key}
+            style={tabButtonStyle(activeTab === tab.key, darkMode)}
+            onClick={() => setActiveTab(tab.key)}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
+      </nav>
+      {/* Main Content */}
+      <main style={{
+        flex: 1,
+        padding: "2.5rem 3rem",
+        maxWidth: 700,
+        margin: "0 auto",
+        background: darkMode ? "#0f172a" : "#f4f6f8",
+      }}>
+        {activeTab === "profile" && renderProfile()}
+        {activeTab === "preferences" && renderPreferences()}
+        {activeTab === "notifications" && renderNotifications()}
+        {activeTab === "appearance" && renderAppearance()}
+        {activeTab === "integrations" && renderIntegrations()}
+        {/* Save Confirmation Modal */}
+        {saveStatus && (
+          <div style={{
+            position: "fixed",
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: "rgba(0,0,0,0.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 2000,
+          }}>
+            <div style={{
+              background: darkMode ? "#23263a" : "#fff",
+              color: darkMode ? "#f8fafc" : "#222",
+              padding: "2rem 2.5rem",
+              borderRadius: 16,
+              boxShadow: "0 2px 24px rgba(0,0,0,0.22)",
+              fontSize: 22,
+              fontWeight: 600,
+              textAlign: "center",
+            }}>
+              Settings Saved!
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

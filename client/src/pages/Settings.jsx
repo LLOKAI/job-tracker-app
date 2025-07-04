@@ -20,6 +20,8 @@ const getInputStyle = (darkMode) => ({
   fontFamily: "inherit",
   backgroundColor: darkMode ? "#334155" : "#ffffff",
   color: darkMode ? "#f8fafc" : "#222222",
+  minWidth: 0,
+  flex: 1,
 });
 
 const getButtonStyle = (active, darkMode) => ({
@@ -35,6 +37,22 @@ const getButtonStyle = (active, darkMode) => ({
   alignItems: "center",
   gap: 6,
 });
+
+const rowStyle = {
+  display: "flex",
+  gap: "1.5rem",
+  flexWrap: "wrap",
+  alignItems: "center",
+  marginBottom: "1.2rem",
+};
+
+const fieldStyle = {
+  flex: 1,
+  minWidth: 180,
+  display: "flex",
+  flexDirection: "column",
+  gap: 4,
+};
 
 export default function Settings() {
   const { darkMode, setDarkMode } = useContext(ThemeContext);
@@ -81,139 +99,152 @@ export default function Settings() {
 
   return (
     <div style={getFormContainerStyle(darkMode)}>
-      <h2 style={{ marginBottom: '1.5rem' }}>Settings</h2>
+      <h2 style={{ marginBottom: '2rem', textAlign: "center" }}>Settings</h2>
       <form
-        style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: "center",
+          gap: 0,
+        }}
         onSubmit={handleSave}
       >
-        {/* Personal Info */}
-        <div>
-          <label style={{ fontWeight: 500 }}>Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            style={getInputStyle(darkMode)}
-          />
+        {/* Name & Email */}
+        <div style={rowStyle}>
+          <div style={fieldStyle}>
+            <label style={{ fontWeight: 500 }}>Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              style={getInputStyle(darkMode)}
+            />
+          </div>
+          <div style={fieldStyle}>
+            <label style={{ fontWeight: 500 }}>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              style={getInputStyle(darkMode)}
+            />
+          </div>
         </div>
-        <div>
-          <label style={{ fontWeight: 500 }}>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            style={getInputStyle(darkMode)}
-          />
+        {/* Default Status & Sort */}
+        <div style={rowStyle}>
+          <div style={fieldStyle}>
+            <label style={{ fontWeight: 500 }}>Default Job Status</label>
+            <select
+              value={defaultStatus}
+              onChange={e => setDefaultStatus(e.target.value)}
+              style={getInputStyle(darkMode)}
+            >
+              <option value="APPLIED">Applied</option>
+              <option value="INTERVIEW">Interview</option>
+              <option value="REJECTED">Rejected</option>
+              <option value="OFFER">Offer</option>
+            </select>
+          </div>
+          <div style={fieldStyle}>
+            <label style={{ fontWeight: 500 }}>Default Sort Order</label>
+            <select
+              value={defaultSort}
+              onChange={e => setDefaultSort(e.target.value)}
+              style={getInputStyle(darkMode)}
+            >
+              <option value="date">Date</option>
+              <option value="company">Company</option>
+              <option value="status">Status</option>
+            </select>
+          </div>
         </div>
-        {/* Preferences */}
-        <div>
-          <label style={{ fontWeight: 500 }}>Default Job Status</label>
-          <select
-            value={defaultStatus}
-            onChange={e => setDefaultStatus(e.target.value)}
-            style={getInputStyle(darkMode)}
-          >
-            <option value="APPLIED">Applied</option>
-            <option value="INTERVIEW">Interview</option>
-            <option value="REJECTED">Rejected</option>
-            <option value="OFFER">Offer</option>
-          </select>
+        {/* Font Size */}
+        <div style={rowStyle}>
+          <div style={fieldStyle}>
+            <label style={{ fontWeight: 500 }}>Font Size</label>
+            <select
+              value={fontSize}
+              onChange={e => setFontSize(e.target.value)}
+              style={getInputStyle(darkMode)}
+            >
+              <option value="small">Small</option>
+              <option value="medium">Medium</option>
+              <option value="large">Large</option>
+            </select>
+          </div>
         </div>
-        <div>
-          <label style={{ fontWeight: 500 }}>Default Sort Order</label>
-          <select
-            value={defaultSort}
-            onChange={e => setDefaultSort(e.target.value)}
-            style={getInputStyle(darkMode)}
-          >
-            <option value="date">Date</option>
-            <option value="company">Company</option>
-            <option value="status">Status</option>
-          </select>
-        </div>
-        <div>
-          <label style={{ fontWeight: 500 }}>Font Size</label>
-          <select
-            value={fontSize}
-            onChange={e => setFontSize(e.target.value)}
-            style={getInputStyle(darkMode)}
-          >
-            <option value="small">Small</option>
-            <option value="medium">Medium</option>
-            <option value="large">Large</option>
-          </select>
-        </div>
-        {/* Compact Mode Toggle */}
-        <div>
-          <label style={{ fontWeight: 500, marginBottom: 6, display: "block" }}>Compact Mode</label>
-          <div style={{ display: "flex", gap: 0 }}>
+        {/* Compact, Dark, Notifications */}
+        <div style={{ ...rowStyle, justifyContent: "center" }}>
+          <div style={fieldStyle}>
+            <label style={{ fontWeight: 500, marginBottom: 6 }}>Compact Mode</label>
+            <div style={{ display: "flex", gap: 0 }}>
+              <button
+                type="button"
+                aria-label="Grid view"
+                onClick={() => setCompactMode(true)}
+                style={getButtonStyle(compactMode, darkMode)}
+              >
+                <MdViewModule />
+                Grid
+              </button>
+              <button
+                type="button"
+                aria-label="List view"
+                onClick={() => setCompactMode(false)}
+                style={getButtonStyle(!compactMode, darkMode)}
+              >
+                <MdViewList />
+                List
+              </button>
+            </div>
+          </div>
+          <div style={fieldStyle}>
+            <label style={{ fontWeight: 500, marginBottom: 6 }}>Dark Mode</label>
+            <div style={{ display: "flex", gap: 0 }}>
+              <button
+                type="button"
+                aria-label="Dark mode"
+                onClick={() => setDarkMode(true)}
+                style={getButtonStyle(darkMode, darkMode)}
+              >
+                <MdDarkMode />
+                Dark
+              </button>
+              <button
+                type="button"
+                aria-label="Light mode"
+                onClick={() => setDarkMode(false)}
+                style={getButtonStyle(!darkMode, darkMode)}
+              >
+                <MdLightMode />
+                Light
+              </button>
+            </div>
+          </div>
+          <div style={fieldStyle}>
+            <label style={{ fontWeight: 500, marginBottom: 6 }}>Enable Notifications</label>
             <button
               type="button"
-              aria-label="Grid view"
-              onClick={() => setCompactMode(true)}
-              style={getButtonStyle(compactMode, darkMode)}
+              aria-label="Toggle notifications"
+              onClick={() => setNotifications(n => !n)}
+              style={{
+                ...getButtonStyle(notifications, darkMode),
+                fontSize: "1.5rem",
+                borderRadius: "50%",
+                width: 44,
+                height: 44,
+                justifyContent: "center",
+              }}
             >
-              <MdViewModule />
-              Grid
-            </button>
-            <button
-              type="button"
-              aria-label="List view"
-              onClick={() => setCompactMode(false)}
-              style={getButtonStyle(!compactMode, darkMode)}
-            >
-              <MdViewList />
-              List
+              {notifications ? <MdNotificationsActive /> : <MdNotificationsNone />}
             </button>
           </div>
         </div>
-        {/* Dark Mode Toggle */}
-        <div>
-          <label style={{ fontWeight: 500, marginBottom: 6, display: "block" }}>Dark Mode</label>
-          <div style={{ display: "flex", gap: 0 }}>
-            <button
-              type="button"
-              aria-label="Dark mode"
-              onClick={() => setDarkMode(true)}
-              style={getButtonStyle(darkMode, darkMode)}
-            >
-              <MdDarkMode />
-              Dark
-            </button>
-            <button
-              type="button"
-              aria-label="Light mode"
-              onClick={() => setDarkMode(false)}
-              style={getButtonStyle(!darkMode, darkMode)}
-            >
-              <MdLightMode />
-              Light
-            </button>
-          </div>
-        </div>
-        {/* Notifications Toggle */}
-        <div>
-          <label style={{ fontWeight: 500, marginBottom: 6, display: "block" }}>Enable Notifications</label>
-          <button
-            type="button"
-            aria-label="Toggle notifications"
-            onClick={() => setNotifications(n => !n)}
-            style={{
-              ...getButtonStyle(notifications, darkMode),
-              fontSize: "1.5rem",
-              borderRadius: "50%",
-              width: 44,
-              height: 44,
-              justifyContent: "center",
-            }}
-          >
-            {notifications ? <MdNotificationsActive /> : <MdNotificationsNone />}
-          </button>
-        </div>
+        {/* Save Button */}
         <button
           type="submit"
           style={{
-            marginTop: 12,
+            marginTop: 18,
             padding: '0.75rem',
             borderRadius: 6,
             border: 'none',
@@ -221,7 +252,9 @@ export default function Settings() {
             color: '#fff',
             fontWeight: 600,
             fontSize: 16,
-            cursor: 'pointer'
+            cursor: 'pointer',
+            width: 160,
+            alignSelf: "center"
           }}
         >
           Save

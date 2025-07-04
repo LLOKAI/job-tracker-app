@@ -44,6 +44,35 @@ export default function Stats() {
     return d >= weekAgo;
   }).length;
 
+  // Top companies
+  const companyCounts = jobs.reduce((acc, job) => {
+    acc[job.company] = (acc[job.company] || 0) + 1;
+    return acc;
+  }, {});
+  const topCompanies = Object.entries(companyCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  // Most common positions
+  const positionCounts = jobs.reduce((acc, job) => {
+    acc[job.position] = (acc[job.position] || 0) + 1;
+    return acc;
+  }, {});
+  const topPositions = Object.entries(positionCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  // Recent jobs (last 7 days)
+  const recentJobs = jobs
+    .filter(j => {
+      const d = new Date(j.appliedDate);
+      const now = new Date();
+      const weekAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+      return d >= weekAgo;
+    })
+    .sort((a, b) => new Date(b.appliedDate) - new Date(a.appliedDate))
+    .slice(0, 5);
+
   // Simple pipeline: Applied → Interview → Offer/Rejected
   const pipeline = [
     { label: "Applied", count: byStatus.APPLIED || 0 },
@@ -54,7 +83,7 @@ export default function Stats() {
 
   return (
     <div style={{
-      maxWidth: 700,
+      maxWidth: 900,
       margin: "0 auto",
       padding: "2rem 0",
       color: darkMode ? "#f8fafc" : "#222",
@@ -84,7 +113,64 @@ export default function Stats() {
           <h2 style={{ marginTop: 32, marginBottom: 12 }}>Pipeline Overview</h2>
           <PipelineBar pipeline={pipeline} darkMode={darkMode} />
 
-          {/* More stats can go here, e.g. top companies, most common positions */}
+          <div style={{
+            display: "flex",
+            gap: 32,
+            flexWrap: "wrap",
+            marginBottom: 32,
+          }}>
+            {/* Top Companies */}
+            <div style={{ flex: 1, minWidth: 220 }}>
+              <h3 style={{ marginBottom: 8 }}>Top Companies</h3>
+              <ol style={{ margin: 0, paddingLeft: 20 }}>
+                {topCompanies.length === 0 && <li style={{ color: "#888" }}>No data</li>}
+                {topCompanies.map(([company, count]) => (
+                  <li key={company}>
+                    <b>{company}</b> <span style={{ color: "#64748b" }}>({count})</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            {/* Most Common Positions */}
+            <div style={{ flex: 1, minWidth: 220 }}>
+              <h3 style={{ marginBottom: 8 }}>Most Common Positions</h3>
+              <ol style={{ margin: 0, paddingLeft: 20 }}>
+                {topPositions.length === 0 && <li style={{ color: "#888" }}>No data</li>}
+                {topPositions.map(([position, count]) => (
+                  <li key={position}>
+                    <b>{position}</b> <span style={{ color: "#64748b" }}>({count})</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            {/* Recent Activity */}
+            <div style={{ flex: 1, minWidth: 220 }}>
+              <h3 style={{ marginBottom: 8 }}>Recent Applications</h3>
+              <ul style={{ margin: 0, paddingLeft: 20 }}>
+                {recentJobs.length === 0 && <li style={{ color: "#888" }}>No recent jobs</li>}
+                {recentJobs.map(job => (
+                  <li key={job.id}>
+                    <b>{job.position}</b> at <b>{job.company}</b>
+                    <span style={{ color: "#64748b" }}> ({new Date(job.appliedDate).toLocaleDateString()})</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Placeholder for future chart */}
+          <div style={{
+            marginTop: 40,
+            padding: 24,
+            borderRadius: 12,
+            background: darkMode ? "#23263a" : "#e5e7eb",
+            textAlign: "center",
+            color: "#64748b",
+            fontStyle: "italic"
+          }}>
+            {/* In the future, add a pie chart or bar chart here using Chart.js, Recharts, or Nivo */}
+            <span>📊 Chart visualizations coming soon!</span>
+          </div>
         </>
       )}
     </div>

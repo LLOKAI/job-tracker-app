@@ -1,6 +1,40 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { ThemeContext } from '../ThemeContext';
 import { UserContext } from '../UserContext';
+import { MdViewModule, MdViewList, MdDarkMode, MdLightMode, MdNotificationsActive, MdNotificationsNone } from "react-icons/md";
+
+const getFormContainerStyle = (darkMode) => ({
+  background: darkMode ? "#1e293b" : "#ffffff",
+  padding: "2rem",
+  borderRadius: "8px",
+  boxShadow: darkMode ? "0 2px 8px rgba(0, 0, 0, 0.7)" : "0 2px 8px rgba(0, 0, 0, 0.1)",
+  maxWidth: "600px",
+  margin: "2rem auto",
+});
+
+const getInputStyle = (darkMode) => ({
+  padding: "0.6rem 0.8rem",
+  borderRadius: "6px",
+  border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
+  fontSize: "1rem",
+  fontFamily: "inherit",
+  backgroundColor: darkMode ? "#334155" : "#ffffff",
+  color: darkMode ? "#f8fafc" : "#222222",
+});
+
+const getButtonStyle = (active, darkMode) => ({
+  background: active ? "var(--button-bg)" : "transparent",
+  color: active ? "var(--button-text)" : (darkMode ? "#f8fafc" : "#222"),
+  border: "none",
+  borderRadius: "6px",
+  padding: "0.4rem 0.7rem",
+  cursor: "pointer",
+  fontSize: "1.4rem",
+  transition: "background 0.2s, color 0.2s",
+  display: "flex",
+  alignItems: "center",
+  gap: 6,
+});
 
 export default function Settings() {
   const { darkMode, setDarkMode } = useContext(ThemeContext);
@@ -19,8 +53,7 @@ export default function Settings() {
     const stored = localStorage.getItem('settings_compactMode');
     return stored ? JSON.parse(stored) : false;
   });
-  // Add a state to track save status
-  const [saveStatus, setSaveStatus] = useState('');
+  const [saveStatus, setSaveStatus] = useState(false);
 
   // Effect to update font size CSS variable
   useEffect(() => {
@@ -42,12 +75,12 @@ export default function Settings() {
     localStorage.setItem('settings_fontSize', fontSize);
     localStorage.setItem('settings_compactMode', JSON.stringify(compactMode));
     setName(name); // Update context
-    setSaveStatus('Saved!');
-    setTimeout(() => setSaveStatus(''), 1500);
+    setSaveStatus(true);
+    setTimeout(() => setSaveStatus(false), 1200);
   };
 
   return (
-    <div style={{ maxWidth: 480, margin: '2rem auto', padding: '2rem', background: darkMode ? '#23263a' : '#fff', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.08)' }}>
+    <div style={getFormContainerStyle(darkMode)}>
       <h2 style={{ marginBottom: '1.5rem' }}>Settings</h2>
       <form
         style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
@@ -60,7 +93,7 @@ export default function Settings() {
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
-            style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc', marginTop: 4 }}
+            style={getInputStyle(darkMode)}
           />
         </div>
         <div>
@@ -69,7 +102,7 @@ export default function Settings() {
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc', marginTop: 4 }}
+            style={getInputStyle(darkMode)}
           />
         </div>
         {/* Preferences */}
@@ -78,7 +111,7 @@ export default function Settings() {
           <select
             value={defaultStatus}
             onChange={e => setDefaultStatus(e.target.value)}
-            style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc', marginTop: 4 }}
+            style={getInputStyle(darkMode)}
           >
             <option value="APPLIED">Applied</option>
             <option value="INTERVIEW">Interview</option>
@@ -91,7 +124,7 @@ export default function Settings() {
           <select
             value={defaultSort}
             onChange={e => setDefaultSort(e.target.value)}
-            style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc', marginTop: 4 }}
+            style={getInputStyle(darkMode)}
           >
             <option value="date">Date</option>
             <option value="company">Company</option>
@@ -103,40 +136,79 @@ export default function Settings() {
           <select
             value={fontSize}
             onChange={e => setFontSize(e.target.value)}
-            style={{ width: '100%', padding: '0.5rem', borderRadius: 6, border: '1px solid #ccc', marginTop: 4 }}
+            style={getInputStyle(darkMode)}
           >
             <option value="small">Small</option>
             <option value="medium">Medium</option>
             <option value="large">Large</option>
           </select>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <input
-            type="checkbox"
-            checked={notifications}
-            onChange={e => setNotifications(e.target.checked)}
-            id="notifications"
-          />
-          <label htmlFor="notifications" style={{ fontWeight: 500 }}>Enable Notifications</label>
+        {/* Compact Mode Toggle */}
+        <div>
+          <label style={{ fontWeight: 500, marginBottom: 6, display: "block" }}>Compact Mode</label>
+          <div style={{ display: "flex", gap: 0 }}>
+            <button
+              type="button"
+              aria-label="Grid view"
+              onClick={() => setCompactMode(true)}
+              style={getButtonStyle(compactMode, darkMode)}
+            >
+              <MdViewModule />
+              Grid
+            </button>
+            <button
+              type="button"
+              aria-label="List view"
+              onClick={() => setCompactMode(false)}
+              style={getButtonStyle(!compactMode, darkMode)}
+            >
+              <MdViewList />
+              List
+            </button>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <input
-            type="checkbox"
-            checked={compactMode}
-            onChange={e => setCompactMode(e.target.checked)}
-            id="compactMode"
-          />
-          <label htmlFor="compactMode" style={{ fontWeight: 500 }}>Compact Mode</label>
+        {/* Dark Mode Toggle */}
+        <div>
+          <label style={{ fontWeight: 500, marginBottom: 6, display: "block" }}>Dark Mode</label>
+          <div style={{ display: "flex", gap: 0 }}>
+            <button
+              type="button"
+              aria-label="Dark mode"
+              onClick={() => setDarkMode(true)}
+              style={getButtonStyle(darkMode, darkMode)}
+            >
+              <MdDarkMode />
+              Dark
+            </button>
+            <button
+              type="button"
+              aria-label="Light mode"
+              onClick={() => setDarkMode(false)}
+              style={getButtonStyle(!darkMode, darkMode)}
+            >
+              <MdLightMode />
+              Light
+            </button>
+          </div>
         </div>
-        {/* Theme toggle (already in header, but shown here as well) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <input
-            type="checkbox"
-            checked={darkMode}
-            onChange={() => setDarkMode(!darkMode)}
-            id="darkMode"
-          />
-          <label htmlFor="darkMode" style={{ fontWeight: 500 }}>Dark Mode</label>
+        {/* Notifications Toggle */}
+        <div>
+          <label style={{ fontWeight: 500, marginBottom: 6, display: "block" }}>Enable Notifications</label>
+          <button
+            type="button"
+            aria-label="Toggle notifications"
+            onClick={() => setNotifications(n => !n)}
+            style={{
+              ...getButtonStyle(notifications, darkMode),
+              fontSize: "1.5rem",
+              borderRadius: "50%",
+              width: 44,
+              height: 44,
+              justifyContent: "center",
+            }}
+          >
+            {notifications ? <MdNotificationsActive /> : <MdNotificationsNone />}
+          </button>
         </div>
         <button
           type="submit"
@@ -154,10 +226,32 @@ export default function Settings() {
         >
           Save
         </button>
-        {saveStatus && (
-          <div style={{ color: 'green', fontWeight: 500 }}>{saveStatus}</div>
-        )}
       </form>
+      {/* Save Confirmation Modal */}
+      {saveStatus && (
+        <div style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(0,0,0,0.25)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 2000,
+        }}>
+          <div style={{
+            background: darkMode ? "#23263a" : "#fff",
+            color: darkMode ? "#f8fafc" : "#222",
+            padding: "2rem 2.5rem",
+            borderRadius: 16,
+            boxShadow: "0 2px 24px rgba(0,0,0,0.22)",
+            fontSize: 22,
+            fontWeight: 600,
+            textAlign: "center",
+          }}>
+            Settings Saved!
+          </div>
+        </div>
+      )}
     </div>
   );
 }

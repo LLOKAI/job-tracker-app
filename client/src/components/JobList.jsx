@@ -62,6 +62,7 @@ const JobList = ({ compactMode }) => {
   const [deleteJobId, setDeleteJobId] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [editingJob, setEditingJob] = useState(null); // NEW
 
   // Infinite scroll state
   const [page, setPage] = useState(1);
@@ -143,6 +144,31 @@ const JobList = ({ compactMode }) => {
       alert("Failed to delete job.");
     } finally {
       setDeleting(false);
+    }
+  };
+
+  // --- Add this function for saving edits ---
+  const handleSaveJob = async (updatedJob) => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/jobs/${updatedJob.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...updatedJob,
+          tags: Array.isArray(updatedJob.tags)
+            ? updatedJob.tags
+            : (updatedJob.tags || "").split(",").map(t => t.trim()).filter(Boolean),
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to update job");
+      const savedJob = await res.json();
+      setJobs((prev) =>
+        prev.map((j) => (j.id === savedJob.id ? savedJob : j))
+      );
+      setEditingJob(null);
+      setSelectedJob(savedJob); // Optionally show updated job
+    } catch (err) {
+      alert("Failed to save job changes.");
     }
   };
 
@@ -288,6 +314,10 @@ const JobList = ({ compactMode }) => {
                 setSelectedJob(job);
               }}
               onDelete={setDeleteJobId}
+              onEdit={e => {
+                e.stopPropagation();
+                setEditingJob(job);
+              }}
               ref={idx === jobs.length - 1 ? lastJobRef : undefined}
             />
           ))}
@@ -304,6 +334,10 @@ const JobList = ({ compactMode }) => {
                 setSelectedJob(job);
               }}
               onDelete={setDeleteJobId}
+              onEdit={e => {
+                e.stopPropagation();
+                setEditingJob(job);
+              }}
               ref={idx === jobs.length - 1 ? lastJobRef : undefined}
             />
           ))}
@@ -324,6 +358,15 @@ const JobList = ({ compactMode }) => {
         darkMode={darkMode}
         onClose={() => setSelectedJob(null)}
         onDelete={setDeleteJobId}
+        onEdit={() => setEditingJob(selectedJob)} // NEW: open modal in edit mode
+      />
+      <JobDetailsModal
+        job={editingJob}
+        darkMode={darkMode}
+        onClose={() => setEditingJob(null)}
+        onDelete={setDeleteJobId}
+        editable // NEW: open in editable mode
+        onSave={handleSaveJob} // <-- Pass the handler here
       />
     </div>
   );

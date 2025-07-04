@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import JobStatusBadge from "./JobStatusBadge";
 import JobTags from "./JobTags";
 import JobEditDeleteButtons from "./JobEditDeleteButtons";
@@ -8,8 +9,67 @@ import {
   iconButtonHoverStyle,
 } from "./jobConstants";
 
-function JobDetailsModal({ job, darkMode, onClose, onDelete }) {
+function getInputStyle(darkMode) {
+  return {
+    padding: "0.6rem 0.8rem",
+    borderRadius: "6px",
+    border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
+    fontSize: "1rem",
+    fontFamily: "inherit",
+    backgroundColor: darkMode ? "#334155" : "#ffffff",
+    color: darkMode ? "#f8fafc" : "#222222",
+    marginBottom: 8,
+    width: "100%",
+  };
+}
+
+function JobDetailsModal({
+  job,
+  darkMode,
+  onClose,
+  onDelete,
+  onEdit,
+  editable = false,
+  onSave,
+}) {
+  const [isEditing, setIsEditing] = useState(editable);
+  const [formData, setFormData] = useState(job || {});
+
+  useEffect(() => {
+    setFormData(job || {});
+    setIsEditing(editable);
+  }, [job, editable]);
+
   if (!job) return null;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleTagsChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      tags: e.target.value.split(",").map((t) => t.trim()).filter(Boolean),
+    }));
+  };
+
+  const handleSave = async () => {
+    // Call onSave with updated job data
+    if (onSave) {
+      await onSave(formData);
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setFormData(job);
+    setIsEditing(false);
+  };
+
   return (
     <div
       style={{
@@ -30,7 +90,7 @@ function JobDetailsModal({ job, darkMode, onClose, onDelete }) {
         style={{
           background: darkMode ? "#23263a" : "#fff",
           color: darkMode ? "#f8fafc" : "#222",
-          padding: "2.5rem 2rem",
+          padding: "2.5rem 3.5rem 2.5rem 2rem",
           borderRadius: 16,
           boxShadow: "0 2px 24px rgba(0,0,0,0.22)",
           minWidth: 340,
@@ -67,42 +127,148 @@ function JobDetailsModal({ job, darkMode, onClose, onDelete }) {
             gap: 12,
           }}
         >
-          <h2 style={{ margin: 0, flex: 1 }}>{job.position}</h2>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <JobEditDeleteButtons
-              jobId={job.id}
-              onEdit={(e) => {
-                e.preventDefault();
-                window.location.href = `/jobs/${job.id}/edit`;
+          {isEditing ? (
+            <input
+              name="position"
+              value={formData.position || ""}
+              onChange={handleChange}
+              style={{
+                ...getInputStyle(darkMode),
+                fontWeight: 700,
+                fontSize: "1.2rem",
+                margin: 0,
               }}
-              onDelete={() => {
-                onDelete(job.id);
-                onClose();
-              }}
-              colorEdit="var(--button-bg)"
-              colorDelete="#ef4444"
-              fontSize={28}
+              placeholder="Position"
+              autoFocus
             />
-            <JobStatusBadge status={job.status} />
+          ) : (
+            <h2 style={{ margin: 0, flex: 1 }}>{job.position}</h2>
+          )}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {!isEditing && (
+              <JobEditDeleteButtons
+                jobId={job.id}
+                onEdit={(e) => {
+                  e.preventDefault();
+                  setIsEditing(true);
+                }}
+                onDelete={() => {
+                  onDelete(job.id);
+                  onClose();
+                }}
+                colorEdit="var(--button-bg)"
+                colorDelete="#ef4444"
+                fontSize={28}
+              />
+            )}
+            <JobStatusBadge status={isEditing ? formData.status : job.status} />
           </div>
         </div>
-        <div style={{ fontWeight: 500, marginBottom: 8 }}>{job.company}</div>
+        <div style={{ fontWeight: 500, marginBottom: 8 }}>
+          {isEditing ? (
+            <input
+              name="company"
+              value={formData.company || ""}
+              onChange={handleChange}
+              style={getInputStyle(darkMode)}
+              placeholder="Company"
+            />
+          ) : (
+            job.company
+          )}
+        </div>
         <div style={{ color: "#64748b", marginBottom: 8 }}>
-          <b>Location:</b> {job.location}
+          <b>Location:</b>{" "}
+          {isEditing ? (
+            <input
+              name="location"
+              value={formData.location || ""}
+              onChange={handleChange}
+              style={getInputStyle(darkMode)}
+              placeholder="Location"
+            />
+          ) : (
+            job.location
+          )}
         </div>
         {job.appliedDate && (
           <div style={{ color: "#64748b", marginBottom: 8 }}>
-            <b>Applied:</b> {new Date(job.appliedDate).toLocaleDateString()}
+            <b>Applied:</b>{" "}
+            {isEditing ? (
+              <input
+                type="date"
+                name="appliedDate"
+                value={
+                  formData.appliedDate
+                    ? formData.appliedDate.slice(0, 10)
+                    : ""
+                }
+                onChange={handleChange}
+                style={getInputStyle(darkMode)}
+              />
+            ) : (
+              new Date(job.appliedDate).toLocaleDateString()
+            )}
           </div>
         )}
-        <JobTags tags={job.tags} darkMode={darkMode} />
-        {job.notes && (
-          <div style={{ marginBottom: 8 }}>
-            <b>Notes:</b> {job.notes}
-          </div>
-        )}
-        {job.url && (
-          <div style={{ marginBottom: 8 }}>
+        <div style={{ marginBottom: 8 }}>
+          <b>Tags:</b>{" "}
+          {isEditing ? (
+            <input
+              name="tags"
+              value={formData.tags ? formData.tags.join(", ") : ""}
+              onChange={handleTagsChange}
+              style={getInputStyle(darkMode)}
+              placeholder="tag1, tag2"
+            />
+          ) : (
+            <JobTags tags={job.tags} darkMode={darkMode} />
+          )}
+        </div>
+        <div style={{ marginBottom: 8 }}>
+          <b>Notes:</b>{" "}
+          {isEditing ? (
+            <textarea
+              name="notes"
+              value={formData.notes || ""}
+              onChange={handleChange}
+              rows={3}
+              style={{ ...getInputStyle(darkMode), resize: "vertical" }}
+              placeholder="Notes"
+            />
+          ) : (
+            job.notes
+          )}
+        </div>
+        <div style={{ marginBottom: 8 }}>
+          <b>Status:</b>{" "}
+          {isEditing ? (
+            <select
+              name="status"
+              value={formData.status || "APPLIED"}
+              onChange={handleChange}
+              style={getInputStyle(darkMode)}
+            >
+              <option value="APPLIED">Applied</option>
+              <option value="INTERVIEW">Interview</option>
+              <option value="REJECTED">Rejected</option>
+              <option value="OFFER">Offer</option>
+            </select>
+          ) : (
+            job.status
+          )}
+        </div>
+        <div style={{ marginBottom: 8 }}>
+          <b>Job Posting:</b>{" "}
+          {isEditing ? (
+            <input
+              name="url"
+              value={formData.url || ""}
+              onChange={handleChange}
+              style={getInputStyle(darkMode)}
+              placeholder="Job URL"
+            />
+          ) : job.url ? (
             <a
               href={job.url}
               target="_blank"
@@ -115,6 +281,42 @@ function JobDetailsModal({ job, darkMode, onClose, onDelete }) {
             >
               Job Posting
             </a>
+          ) : (
+            <span style={{ color: "#888" }}>N/A</span>
+          )}
+        </div>
+        {isEditing && (
+          <div style={{ display: "flex", gap: 12, marginTop: 18 }}>
+            <button
+              onClick={handleSave}
+              style={{
+                background: "#3b82f6",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                padding: "0.7rem 1.2rem",
+                fontWeight: 600,
+                fontSize: 16,
+                cursor: "pointer",
+              }}
+            >
+              Save
+            </button>
+            <button
+              onClick={handleCancel}
+              style={{
+                background: "#64748b",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                padding: "0.7rem 1.2rem",
+                fontWeight: 600,
+                fontSize: 16,
+                cursor: "pointer",
+              }}
+            >
+              Cancel
+            </button>
           </div>
         )}
       </div>

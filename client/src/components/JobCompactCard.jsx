@@ -3,7 +3,7 @@ import JobStatusBadge from "./JobStatusBadge";
 import JobEditDeleteButtons from "./JobEditDeleteButtons";
 
 const JobCompactCard = React.forwardRef(function JobCompactCard(
-  { job, onSelect, onDelete },
+  { job, onSelect, onDelete, onEdit }, // add onEdit
   ref
 ) {
   return (
@@ -68,7 +68,7 @@ const JobCompactCard = React.forwardRef(function JobCompactCard(
       >
         <JobEditDeleteButtons
           jobId={job.id}
-          onEdit={e => e.stopPropagation()}
+          onEdit={onEdit}
           onDelete={e => {
             e.stopPropagation();
             onDelete(job.id);

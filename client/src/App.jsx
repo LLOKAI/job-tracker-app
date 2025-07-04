@@ -5,7 +5,6 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import NewJob from './pages/NewJob';
-import EditJob from './pages/EditJob';
 import Stats from './pages/Stats';
 import Reminders from './pages/Reminders';
 import Tools from './pages/Tools';
@@ -19,7 +18,6 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/jobs/new" element={<NewJob />} />
-          <Route path="/jobs/:id/edit" element={<EditJob />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/reminders" element={<Reminders />} />
           <Route path="/tools" element={<Tools />} />

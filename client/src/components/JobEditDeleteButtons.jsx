@@ -1,25 +1,23 @@
-import { Link } from "react-router-dom";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { iconButtonStyle, iconButtonHoverStyle } from "./jobConstants";
 
 function JobEditDeleteButtons({ jobId, onDelete, onEdit, colorEdit = "var(--button-bg)", colorDelete = "#ef4444", fontSize = 24 }) {
   return (
     <>
-      <Link
-        to={`/jobs/${jobId}/edit`}
+      <button
         style={{
           ...iconButtonStyle,
           color: colorEdit,
           fontSize,
         }}
+        onClick={onEdit}
         title="Edit"
         tabIndex={0}
-        onClick={onEdit}
         onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
         onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
       >
         <MdEdit />
-      </Link>
+      </button>
       <button
         style={{
           ...iconButtonStyle,

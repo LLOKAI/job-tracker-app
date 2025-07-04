@@ -4,7 +4,7 @@ import JobStatusBadge from "./JobStatusBadge";
 import JobEditDeleteButtons from "./JobEditDeleteButtons";
 
 const JobRowCard = React.forwardRef(function JobRowCard(
-  { job, darkMode, onSelect, onDelete },
+  { job, darkMode, onSelect, onDelete, onEdit }, // add onEdit
   ref
 ) {
   return (
@@ -88,7 +88,7 @@ const JobRowCard = React.forwardRef(function JobRowCard(
         <JobStatusBadge status={job.status} />
         <JobEditDeleteButtons
           jobId={job.id}
-          onEdit={e => e.stopPropagation()}
+          onEdit={onEdit}
           onDelete={e => {
             e.stopPropagation();
             onDelete(job.id);

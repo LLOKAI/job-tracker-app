@@ -5,12 +5,14 @@ import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import JobList from '../components/JobList';
 import { MdViewModule, MdViewList } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const [compactMode, setCompactMode] = useState(() => {
     const stored = localStorage.getItem('settings_compactMode');
     return stored ? JSON.parse(stored) : false;
   });
+  const navigate = useNavigate();
 
   // Save compact mode to localStorage when changed
   const handleCompactToggle = (mode) => {
@@ -63,6 +65,28 @@ export default function Dashboard() {
         </div>
       </div>
       <JobList compactMode={compactMode} />
+      <button
+        onClick={() => navigate("/jobs/new")}
+        style={{
+          position: "fixed",
+          bottom: 32,
+          right: 32,
+          background: "#3b82f6",
+          color: "#fff",
+          border: "none",
+          borderRadius: "50%",
+          width: 60,
+          height: 60,
+          fontSize: 32,
+          boxShadow: "0 2px 12px rgba(0,0,0,0.18)",
+          cursor: "pointer",
+          zIndex: 200,
+        }}
+        title="Add Job"
+        aria-label="Add Job"
+      >
+        +
+      </button>
     </>
   );
 }

@@ -12,6 +12,7 @@ export default function Dashboard() {
     const stored = localStorage.getItem('settings_compactMode');
     return stored ? JSON.parse(stored) : false;
   });
+  const [dashboardQuote, setDashboardQuote] = useState(() => localStorage.getItem('settings_dashboardQuote') || '');
   const navigate = useNavigate();
 
   // Save compact mode to localStorage when changed
@@ -64,6 +65,26 @@ export default function Dashboard() {
           </button>
         </div>
       </div>
+      {/* Dashboard Quote */}
+      {dashboardQuote && (
+        <div
+          style={{
+            margin: "0 0 1.5rem 0",
+            padding: "1rem 2rem",
+            background: "var(--card-bg)",
+            color: "var(--text-color)",
+            borderRadius: 10,
+            boxShadow: "0 2px 8px var(--card-shadow)",
+            fontSize: 20,
+            fontStyle: "italic",
+            textAlign: "center",
+            fontWeight: 500,
+            letterSpacing: 0.2,
+          }}
+        >
+          “{dashboardQuote}”
+        </div>
+      )}
       <JobList compactMode={compactMode} />
       <button
         onClick={() => navigate("/jobs/new")}

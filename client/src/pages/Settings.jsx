@@ -108,6 +108,9 @@ export default function Settings() {
   const [apiToken, setApiToken] = useState("sk-1234-xxxx");
   const [slackIntegration, setSlackIntegration] = useState(false);
 
+  // New state for dashboard quote
+  const [dashboardQuote, setDashboardQuote] = useState(() => localStorage.getItem('settings_dashboardQuote') || '');
+
   useEffect(() => {
     let size;
     if (fontSize === 'small') size = '14px';
@@ -410,8 +413,16 @@ export default function Settings() {
   }
 
   function renderPersonalization() {
+    // Save dashboard quote with other settings
+    const handlePersonalizationSave = (e) => {
+      e.preventDefault();
+      localStorage.setItem('settings_dashboardQuote', dashboardQuote);
+      setSaveStatus(true);
+      setTimeout(() => setSaveStatus(false), 1200);
+    };
+
     return (
-      <form style={{ maxWidth: 500 }}>
+      <form onSubmit={handlePersonalizationSave} style={{ maxWidth: 500 }}>
         <div style={sectionStyle}>
           <div style={labelStyle}>Profile Picture</div>
           <div style={descStyle}>Upload or select an avatar for your profile.</div>
@@ -425,8 +436,15 @@ export default function Settings() {
         <div style={sectionStyle}>
           <div style={labelStyle}>Dashboard Quote</div>
           <div style={descStyle}>Set a custom motivational quote for your dashboard.</div>
-          <input type="text" placeholder="Your quote..." style={inputStyle(darkMode)} disabled />
+          <input
+            type="text"
+            placeholder="Your quote..."
+            value={dashboardQuote}
+            onChange={e => setDashboardQuote(e.target.value)}
+            style={inputStyle(darkMode)}
+          />
         </div>
+        <button type="submit" style={buttonStyle(darkMode)}>Save Personalization</button>
       </form>
     );
   }

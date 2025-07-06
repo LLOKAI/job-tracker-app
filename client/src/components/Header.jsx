@@ -48,12 +48,9 @@ export default function Header() {
         zIndex: 100,
       }}
     >
-      {/* Left: Logo and Title */}
+      {/* Left: Logo, Title, and Dark Mode Button */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
         <Logo />
-      </div>
-      {/* Right: Greeting Dropdown and Dark Mode */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
         <button
           aria-label="Toggle dark mode"
           onClick={() => setDarkMode(!darkMode)}
@@ -75,7 +72,9 @@ export default function Header() {
         >
           {darkMode ? <MdOutlineDarkMode color='#ffffff' /> : <MdOutlineLightMode color='#000000' />}
         </button>
-        {/* Greeting Dropdown */}
+      </div>
+      {/* Right: Greeting Dropdown */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
         <div ref={dropdownRef} style={{ position: 'relative' }}>
           <button
             onClick={() => setDropdownOpen((v) => !v)}

@@ -13,6 +13,7 @@ export default function Dashboard() {
     return stored ? JSON.parse(stored) : false;
   });
   const [dashboardQuote, setDashboardQuote] = useState(() => localStorage.getItem('settings_dashboardQuote') || '');
+  const [dashboardQuoteAuthor, setDashboardQuoteAuthor] = useState(() => localStorage.getItem('settings_dashboardQuoteAuthor') || '');
   const navigate = useNavigate();
 
   // Save compact mode to localStorage when changed
@@ -83,6 +84,18 @@ export default function Dashboard() {
           }}
         >
           “{dashboardQuote}”
+          {dashboardQuoteAuthor && (
+            <div style={{
+              fontSize: 16,
+              fontStyle: "normal",
+              fontWeight: 400,
+              marginTop: 8,
+              color: "var(--text-color)",
+              opacity: 0.8,
+            }}>
+              — {dashboardQuoteAuthor}
+            </div>
+          )}
         </div>
       )}
       <JobList compactMode={compactMode} />

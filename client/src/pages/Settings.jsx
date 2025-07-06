@@ -110,6 +110,7 @@ export default function Settings() {
 
   // New state for dashboard quote
   const [dashboardQuote, setDashboardQuote] = useState(() => localStorage.getItem('settings_dashboardQuote') || '');
+  const [dashboardQuoteAuthor, setDashboardQuoteAuthor] = useState(() => localStorage.getItem('settings_dashboardQuoteAuthor') || '');
 
   useEffect(() => {
     let size;
@@ -413,10 +414,10 @@ export default function Settings() {
   }
 
   function renderPersonalization() {
-    // Save dashboard quote with other settings
     const handlePersonalizationSave = (e) => {
       e.preventDefault();
       localStorage.setItem('settings_dashboardQuote', dashboardQuote);
+      localStorage.setItem('settings_dashboardQuoteAuthor', dashboardQuoteAuthor);
       setSaveStatus(true);
       setTimeout(() => setSaveStatus(false), 1200);
     };
@@ -436,11 +437,17 @@ export default function Settings() {
         <div style={sectionStyle}>
           <div style={labelStyle}>Dashboard Quote</div>
           <div style={descStyle}>Set a custom motivational quote for your dashboard.</div>
-          <input
-            type="text"
+          <textarea
             placeholder="Your quote..."
             value={dashboardQuote}
             onChange={e => setDashboardQuote(e.target.value)}
+            style={{ ...inputStyle(darkMode), minHeight: 80, resize: "vertical" }}
+          />
+          <input
+            type="text"
+            placeholder="Quote author (optional)"
+            value={dashboardQuoteAuthor}
+            onChange={e => setDashboardQuoteAuthor(e.target.value)}
             style={inputStyle(darkMode)}
           />
         </div>

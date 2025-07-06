@@ -101,12 +101,13 @@ export default function Header() {
                 src={profilePic}
                 alt="Profile"
                 style={{
-                  width: 32,
-                  height: 32,
+                  width: 44,
+                  height: 44,
                   borderRadius: "50%",
                   objectFit: "cover",
                   marginRight: 6,
-                  border: "2px solid #3b82f6",
+                  // border: "2px solid #3b82f6",
+                  border: "1.5px solid #d1d5db",
                   background: "#fff",
                 }}
               />

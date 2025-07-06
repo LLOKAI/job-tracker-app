@@ -111,6 +111,7 @@ export default function Settings() {
   // New state for dashboard quote
   const [dashboardQuote, setDashboardQuote] = useState(() => localStorage.getItem('settings_dashboardQuote') || '');
   const [dashboardQuoteAuthor, setDashboardQuoteAuthor] = useState(() => localStorage.getItem('settings_dashboardQuoteAuthor') || '');
+  const [profilePic, setProfilePic] = useState(() => localStorage.getItem('settings_profilePic') || '');
 
   useEffect(() => {
     let size;
@@ -418,16 +419,65 @@ export default function Settings() {
       e.preventDefault();
       localStorage.setItem('settings_dashboardQuote', dashboardQuote);
       localStorage.setItem('settings_dashboardQuoteAuthor', dashboardQuoteAuthor);
+      localStorage.setItem('settings_profilePic', profilePic);
       setSaveStatus(true);
       setTimeout(() => setSaveStatus(false), 1200);
     };
+
+    const handleProfilePicChange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => setProfilePic(ev.target.result);
+      reader.readAsDataURL(file);
+    };
+
+    const handleRemovePic = () => setProfilePic('');
 
     return (
       <form onSubmit={handlePersonalizationSave} style={{ maxWidth: 500 }}>
         <div style={sectionStyle}>
           <div style={labelStyle}>Profile Picture</div>
           <div style={descStyle}>Upload or select an avatar for your profile.</div>
-          <input type="file" style={inputStyle(darkMode)} disabled />
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleProfilePicChange}
+              style={{ ...inputStyle(darkMode), width: "auto", marginBottom: 0 }}
+            />
+            {profilePic && (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                <img
+                  src={profilePic}
+                  alt="Profile"
+                  style={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    border: "2px solid #3b82f6",
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={handleRemovePic}
+                  style={{
+                    background: "#ef4444",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 6,
+                    padding: "0.2rem 0.7rem",
+                    fontSize: 13,
+                    cursor: "pointer",
+                    marginTop: 2,
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         <div style={sectionStyle}>
           <div style={labelStyle}>Accent Color</div>

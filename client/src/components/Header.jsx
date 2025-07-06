@@ -11,6 +11,16 @@ export default function Header() {
   const [logoutHover, setLogoutHover] = useState(false);
   const dropdownRef = useRef();
 
+  // Add state for profile picture
+  const [profilePic, setProfilePic] = useState(() => localStorage.getItem('settings_profilePic') || '');
+
+  // Keep profilePic in sync with localStorage changes
+  useEffect(() => {
+    const onStorage = () => setProfilePic(localStorage.getItem('settings_profilePic') || '');
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
   // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e) {
@@ -86,23 +96,39 @@ export default function Header() {
             aria-haspopup="true"
             aria-expanded={dropdownOpen}
           >
-            <span
-              style={{
-                background: '#4a4e69',
-                color: '#fff',
-                borderRadius: '50%',
-                width: 32,
-                height: 32,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 700,
-                fontSize: 16,
-                marginRight: 6,
-              }}
-            >
-              {name?.[0]?.toUpperCase() || "?"}
-            </span>
+            {profilePic ? (
+              <img
+                src={profilePic}
+                alt="Profile"
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  marginRight: 6,
+                  border: "2px solid #3b82f6",
+                  background: "#fff",
+                }}
+              />
+            ) : (
+              <span
+                style={{
+                  background: '#4a4e69',
+                  color: '#fff',
+                  borderRadius: '50%',
+                  width: 32,
+                  height: 32,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontSize: 16,
+                  marginRight: 6,
+                }}
+              >
+                {name?.[0]?.toUpperCase() || "?"}
+              </span>
+            )}
             Hello, {name}
             <MdKeyboardArrowDown />
           </button>

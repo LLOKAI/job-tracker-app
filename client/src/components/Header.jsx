@@ -96,6 +96,8 @@ export default function Header() {
             aria-haspopup="true"
             aria-expanded={dropdownOpen}
           >
+            Hello, {name}
+            <MdKeyboardArrowDown />
             {profilePic ? (
               <img
                 src={profilePic}
@@ -105,8 +107,7 @@ export default function Header() {
                   height: 44,
                   borderRadius: "50%",
                   objectFit: "cover",
-                  marginRight: 6,
-                  // border: "2px solid #3b82f6",
+                  marginLeft: 6,
                   border: "1.5px solid #d1d5db",
                   background: "#fff",
                 }}
@@ -124,14 +125,12 @@ export default function Header() {
                   justifyContent: 'center',
                   fontWeight: 700,
                   fontSize: 16,
-                  marginRight: 6,
+                  marginLeft: 6,
                 }}
               >
                 {name?.[0]?.toUpperCase() || "?"}
               </span>
             )}
-            Hello, {name}
-            <MdKeyboardArrowDown />
           </button>
           {dropdownOpen && (
             <div

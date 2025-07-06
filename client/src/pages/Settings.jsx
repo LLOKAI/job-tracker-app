@@ -437,19 +437,31 @@ export default function Settings() {
         <div style={sectionStyle}>
           <div style={labelStyle}>Dashboard Quote</div>
           <div style={descStyle}>Set a custom motivational quote for your dashboard.</div>
-          <textarea
-            placeholder="Your quote..."
-            value={dashboardQuote}
-            onChange={e => setDashboardQuote(e.target.value)}
-            style={{ ...inputStyle(darkMode), minHeight: 80, resize: "vertical" }}
-          />
-          <input
-            type="text"
-            placeholder="Quote author (optional)"
-            value={dashboardQuoteAuthor}
-            onChange={e => setDashboardQuoteAuthor(e.target.value)}
-            style={inputStyle(darkMode)}
-          />
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <textarea
+              placeholder="Your quote..."
+              value={dashboardQuote}
+              onChange={e => setDashboardQuote(e.target.value)}
+              style={{
+                ...inputStyle(darkMode),
+                minHeight: 80,
+                resize: "vertical",
+                width: "100%",
+                marginBottom: 0,
+              }}
+            />
+            <input
+              type="text"
+              placeholder="Quote author (optional)"
+              value={dashboardQuoteAuthor}
+              onChange={e => setDashboardQuoteAuthor(e.target.value)}
+              style={{
+                ...inputStyle(darkMode),
+                marginBottom: 0,
+                width: "100%",
+              }}
+            />
+          </div>
         </div>
         <button type="submit" style={buttonStyle(darkMode)}>Save Personalization</button>
       </form>

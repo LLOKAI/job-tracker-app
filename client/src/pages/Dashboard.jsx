@@ -14,6 +14,7 @@ export default function Dashboard() {
   });
   const [dashboardQuote, setDashboardQuote] = useState(() => localStorage.getItem('settings_dashboardQuote') || '');
   const [dashboardQuoteAuthor, setDashboardQuoteAuthor] = useState(() => localStorage.getItem('settings_dashboardQuoteAuthor') || '');
+  const [showQuote, setShowQuote] = useState(true); // Add this line
   const navigate = useNavigate();
 
   // Save compact mode to localStorage when changed
@@ -32,6 +33,26 @@ export default function Dashboard() {
       }}>
         <h1 style={{ margin: 0 }}>Dashboard</h1>
         <div style={{ display: "flex", gap: 4 }}>
+          {/* Toggle Quote Button */}
+          {dashboardQuote && (
+            <button
+              onClick={() => setShowQuote((v) => !v)}
+              style={{
+                background: "var(--button-bg)",
+                color: "var(--button-text)",
+                border: "none",
+                borderRadius: 6,
+                padding: "0.4rem 0.9rem",
+                fontWeight: 600,
+                fontSize: "1rem",
+                cursor: "pointer",
+                marginRight: 8,
+              }}
+              title={showQuote ? "Hide quote" : "Show quote"}
+            >
+              {showQuote ? "Hide Quote" : "Show Quote"}
+            </button>
+          )}
           <button
             aria-label="Grid view"
             onClick={() => handleCompactToggle(true)}
@@ -67,7 +88,7 @@ export default function Dashboard() {
         </div>
       </div>
       {/* Dashboard Quote */}
-      {dashboardQuote && (
+      {dashboardQuote && showQuote && (
         <div
           style={{
             margin: "0 0 1.5rem 0",

@@ -14,16 +14,27 @@ const JobRowCard = React.forwardRef(function JobRowCard(
       onClick={onSelect}
       style={{
         background: "var(--card-bg)",
-        borderRadius: "8px",
-        boxShadow: `0 2px 8px var(--card-shadow)`,
-        padding: "1rem",
-        marginBottom: "1rem",
+        border: "1px solid var(--border-color)",
+        borderRadius: "var(--radius-lg)",
+        boxShadow: "var(--card-shadow)",
+        padding: "1.05rem 1.1rem",
+        marginBottom: "0.9rem",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        gap: "2rem",
+        gap: "1.5rem",
         cursor: "pointer",
-        transition: "box-shadow 0.2s",
+        transition: "box-shadow 0.18s, transform 0.18s, border-color 0.18s",
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.boxShadow = "var(--card-shadow-hover)";
+        e.currentTarget.style.transform = "translateY(-2px)";
+        e.currentTarget.style.borderColor = "var(--border-strong)";
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.boxShadow = "var(--card-shadow)";
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.borderColor = "var(--border-color)";
       }}
     >
       <div style={{ flex: 1 }}>
@@ -33,7 +44,7 @@ const JobRowCard = React.forwardRef(function JobRowCard(
           </strong>
           <span
             style={{
-              color: "#888",
+              color: "var(--text-muted)",
               fontSize: "calc(var(--font-size-base) * 0.95)",
             }}
           >
@@ -44,7 +55,7 @@ const JobRowCard = React.forwardRef(function JobRowCard(
           style={{
             fontSize: "calc(var(--font-size-base) * 0.9)",
             marginTop: "0.3rem",
-            color: "#888",
+            color: "var(--text-muted)",
           }}
         >
           {job.location}
@@ -60,7 +71,7 @@ const JobRowCard = React.forwardRef(function JobRowCard(
             style={{
               marginTop: 4,
               fontSize: "calc(var(--font-size-base) * 0.9)",
-              color: "#64748b",
+              color: "var(--text-muted)",
             }}
           >
             <span style={{ fontWeight: 500 }}>Notes:</span>{" "}

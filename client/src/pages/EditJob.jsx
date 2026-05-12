@@ -2,35 +2,26 @@ import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ThemeContext } from "../contexts";
 
-const getFormContainerStyle = (darkMode) => ({
-  background: darkMode ? "#1e293b" : "#ffffff",
-  padding: "2rem",
-  borderRadius: "8px",
-  boxShadow: darkMode ? "0 2px 8px rgba(0, 0, 0, 0.7)" : "0 2px 8px rgba(0, 0, 0, 0.1)",
+const getFormContainerStyle = () => ({
   maxWidth: "600px",
-  margin: "2rem auto",
+  margin: "0 auto",
 });
 
-const getInputStyle = (darkMode) => ({
+const getInputStyle = () => ({
   padding: "0.6rem 0.8rem",
-  borderRadius: "6px",
-  border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
+  borderRadius: "var(--radius-md)",
+  border: "1px solid var(--input-border)",
   fontSize: "1rem",
   fontFamily: "inherit",
-  backgroundColor: darkMode ? "#334155" : "#ffffff",
-  color: darkMode ? "#f8fafc" : "#222222",
+  backgroundColor: "var(--input-bg)",
+  color: "var(--input-text)",
 });
 
 const getButtonStyle = (submitting, darkMode) => ({
-  padding: "0.75rem 1rem",
   backgroundColor: submitting 
     ? (darkMode ? "#1e40af" : "#93c5fd")
     : "#3b82f6",
-  color: "#ffffff",
-  border: "none",
-  borderRadius: "6px",
   cursor: submitting ? "not-allowed" : "pointer",
-  fontWeight: "bold",
 });
 
 export default function EditJob() {
@@ -118,9 +109,16 @@ export default function EditJob() {
 
   return (
     <div style={getFormContainerStyle(darkMode)}>
-      <h1 style={{ marginBottom: "1rem" }}>Edit Job</h1>
+      <div className="page-header">
+        <div>
+          <p className="page-kicker">Opportunity details</p>
+          <h1 className="page-title">Edit Job</h1>
+          <p className="page-subtitle">Keep this role accurate as the process changes.</p>
+        </div>
+      </div>
+      <div className="surface-card form-card">
       {submitError && <p style={{ color: darkMode ? "#f87171" : "#b91c1c", marginBottom: "1rem" }}>{submitError}</p>}
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <form onSubmit={handleSubmit} className="form-grid">
         <input
           name="company"
           placeholder="Company"
@@ -188,10 +186,11 @@ export default function EditJob() {
           max={today}
         />
 
-        <button type="submit" disabled={submitting} style={getButtonStyle(submitting, darkMode)}>
+        <button className="btn" type="submit" disabled={submitting} style={getButtonStyle(submitting, darkMode)}>
           {submitting ? "Saving..." : "Save"}
         </button>
       </form>
+      </div>
     </div>
   );
 }

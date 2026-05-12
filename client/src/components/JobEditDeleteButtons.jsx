@@ -12,6 +12,7 @@ function JobEditDeleteButtons({ onDelete, onEdit, colorEdit = "var(--button-bg)"
         }}
         onClick={onEdit}
         title="Edit"
+        aria-label="Edit job"
         tabIndex={0}
         onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
         onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}
@@ -26,6 +27,7 @@ function JobEditDeleteButtons({ onDelete, onEdit, colorEdit = "var(--button-bg)"
         }}
         onClick={onDelete}
         title="Delete"
+        aria-label="Delete job"
         tabIndex={0}
         onMouseEnter={e => Object.assign(e.currentTarget.style, iconButtonHoverStyle)}
         onMouseLeave={e => Object.assign(e.currentTarget.style, iconButtonStyle)}

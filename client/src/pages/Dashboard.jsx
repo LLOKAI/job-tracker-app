@@ -2,7 +2,6 @@
 // It is a simple dashboard page that displays a welcome message.
 
 import React, { useState } from 'react';
-import Layout from '../components/Layout';
 import JobList from '../components/JobList';
 import { MdViewModule, MdViewList } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -25,29 +24,20 @@ export default function Dashboard() {
 
   return (
     <>
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginBottom: "1.5rem"
-      }}>
-        <h1 style={{ margin: 0 }}>Dashboard</h1>
-        <div style={{ display: "flex", gap: 4 }}>
+      <div className="page-header">
+        <div>
+          <p className="page-kicker">Pipeline</p>
+          <h1 className="page-title">Dashboard</h1>
+          <p className="page-subtitle">
+            Track every opportunity from first application to final decision.
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
           {/* Toggle Quote Button */}
           {dashboardQuote && (
             <button
+              className="btn btn-secondary"
               onClick={() => setShowQuote((v) => !v)}
-              style={{
-                background: "var(--button-bg)",
-                color: "var(--button-text)",
-                border: "none",
-                borderRadius: 6,
-                padding: "0.4rem 0.9rem",
-                fontWeight: 600,
-                fontSize: "1rem",
-                cursor: "pointer",
-                marginRight: 8,
-              }}
               title={showQuote ? "Hide quote" : "Show quote"}
             >
               {showQuote ? "Hide Quote" : "Show Quote"}
@@ -55,32 +45,24 @@ export default function Dashboard() {
           )}
           <button
             aria-label="Grid view"
+            className="icon-btn"
             onClick={() => handleCompactToggle(true)}
             style={{
               background: compactMode ? "var(--button-bg)" : "transparent",
-              color: compactMode ? "var(--button-text)" : "#222",
-              border: "none",
-              borderRadius: "6px 0 0 6px",
-              padding: "0.4rem 0.7rem",
-              cursor: "pointer",
+              color: compactMode ? "var(--button-text)" : "var(--text-muted)",
               fontSize: "1.4rem",
-              transition: "background 0.2s, color 0.2s",
             }}
           >
             <MdViewModule />
           </button>
           <button
             aria-label="List view"
+            className="icon-btn"
             onClick={() => handleCompactToggle(false)}
             style={{
               background: !compactMode ? "var(--button-bg)" : "transparent",
-              color: !compactMode ? "var(--button-text)" : "#222",
-              border: "none",
-              borderRadius: "0 6px 6px 0",
-              padding: "0.4rem 0.7rem",
-              cursor: "pointer",
+              color: !compactMode ? "var(--button-text)" : "var(--text-muted)",
               fontSize: "1.4rem",
-              transition: "background 0.2s, color 0.2s",
             }}
           >
             <MdViewList />
@@ -90,18 +72,13 @@ export default function Dashboard() {
       {/* Dashboard Quote */}
       {dashboardQuote && showQuote && (
         <div
+          className="surface-card"
           style={{
             margin: "0 0 1.5rem 0",
-            padding: "1rem 2rem",
-            background: "var(--card-bg)",
-            color: "var(--text-color)",
-            borderRadius: 10,
-            boxShadow: "0 2px 8px var(--card-shadow)",
-            fontSize: 20,
+            fontSize: 18,
             fontStyle: "italic",
-            textAlign: "center",
+            textAlign: "left",
             fontWeight: 500,
-            letterSpacing: 0.2,
           }}
         >
           “{dashboardQuote}”
@@ -121,20 +98,17 @@ export default function Dashboard() {
       )}
       <JobList compactMode={compactMode} />
       <button
+        className="btn"
         onClick={() => navigate("/jobs/new")}
         style={{
           position: "fixed",
           bottom: 32,
           right: 32,
-          background: "#3b82f6",
-          color: "#fff",
-          border: "none",
           borderRadius: "50%",
           width: 60,
           height: 60,
           fontSize: 32,
-          boxShadow: "0 2px 12px rgba(0,0,0,0.18)",
-          cursor: "pointer",
+          boxShadow: "0 18px 36px rgba(37,99,235,0.28)",
           zIndex: 200,
         }}
         title="Add Job"

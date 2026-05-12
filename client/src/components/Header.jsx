@@ -1,7 +1,8 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { ThemeContext, UserContext } from '../contexts';
 import Logo from './Logo';
-import { MdOutlineDarkMode, MdOutlineLightMode, MdKeyboardArrowDown } from "react-icons/md";
+import { MdOutlineDarkMode, MdOutlineLightMode, MdKeyboardArrowDown, MdLogout, MdSettings } from "react-icons/md";
 
 export default function Header() {
   const { darkMode, setDarkMode } = useContext(ThemeContext);
@@ -39,12 +40,15 @@ export default function Header() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 1rem',
-        height: 72,
+        padding: '0 24px',
+        height: 'var(--header-height)',
         background: 'var(--header-bg)',
-        boxShadow: darkMode ? '0 1px 4px rgba(0,0,0,0.7)' : '0 1px 4px rgba(0,0,0,0.1)',
-        position: 'relative',
-        zIndex: 100,
+        color: 'var(--header-text)',
+        borderBottom: '1px solid var(--border-color)',
+        backdropFilter: 'blur(16px)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 300,
       }}
     >
       {/* Left: Logo, Title, and Dark Mode Button */}
@@ -53,23 +57,13 @@ export default function Header() {
         <button
           aria-label="Toggle dark mode"
           onClick={() => setDarkMode(!darkMode)}
+          className="icon-btn"
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '44px',
-            height: '44px',
-            borderRadius: '999px',
-            border: 'none',
-            background: darkMode ? '#22223b' : '#f1f5f9',
-            boxShadow: darkMode ? '0 1px 4px rgba(0,0,0,0.4)' : '0 1px 4px rgba(0,0,0,0.08)',
-            cursor: 'pointer',
-            transition: 'background 0.2s, color 0.2s',
             fontSize: '1.7rem',
           }}
           title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
         >
-          {darkMode ? <MdOutlineDarkMode color='#ffffff' /> : <MdOutlineLightMode color='#000000' />}
+          {darkMode ? <MdOutlineDarkMode /> : <MdOutlineLightMode />}
         </button>
       </div>
       {/* Right: Greeting Dropdown */}
@@ -81,20 +75,22 @@ export default function Header() {
               display: 'flex',
               alignItems: 'center',
               gap: 8,
-              background: 'none',
-              border: 'none',
+              background: 'var(--card-bg)',
+              border: '1px solid var(--border-color)',
               cursor: 'pointer',
-              fontWeight: 500,
+              fontWeight: 700,
               color: 'inherit',
               fontSize: 16,
-              padding: '0.3rem 0.7rem',
-              borderRadius: 8,
-              transition: 'background 0.15s',
+              padding: '0.35rem 0.45rem 0.35rem 0.85rem',
+              borderRadius: 999,
+              boxShadow: '0 8px 22px rgba(23, 32, 51, 0.08)',
+              transition: 'background 0.15s, border-color 0.15s',
             }}
             aria-haspopup="true"
             aria-expanded={dropdownOpen}
           >
-            Hello, {name}
+            <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Hello,</span>
+            <span>{name}</span>
             <MdKeyboardArrowDown />
             {profilePic ? (
               <img
@@ -135,28 +131,50 @@ export default function Header() {
               style={{
                 position: 'absolute',
                 right: 0,
-                top: 44,
+                top: 54,
                 background: darkMode ? '#23263a' : '#fff',
                 color: darkMode ? '#f8fafc' : '#222',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
-                borderRadius: 8,
-                minWidth: 140,
+                boxShadow: 'var(--card-shadow)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 12,
+                minWidth: 174,
                 zIndex: 1000,
-                padding: '0.5rem 0',
+                padding: '0.45rem',
               }}
             >
+              <Link
+                to="/settings"
+                onClick={() => setDropdownOpen(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  padding: '0.65rem 0.75rem',
+                  borderRadius: 8,
+                  fontWeight: 650,
+                  fontSize: 15,
+                }}
+              >
+                <MdSettings />
+                Settings
+              </Link>
               <button
                 style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
                   width: '100%',
                   background: logoutHover ? (darkMode ? '#334155' : '#f3f4f6') : 'none',
                   border: 'none',
                   color: 'inherit',
-                  padding: '0.7rem 1.2rem',
+                  padding: '0.65rem 0.75rem',
                   textAlign: 'left',
                   cursor: 'pointer',
-                  fontWeight: 500,
+                  fontWeight: 650,
                   fontSize: 15,
-                  borderRadius: 0,
+                  borderRadius: 8,
                   transition: 'background 0.15s',
                 }}
                 onMouseEnter={() => setLogoutHover(true)}
@@ -166,6 +184,7 @@ export default function Header() {
                   alert('Logout clicked!');
                 }}
               >
+                <MdLogout />
                 Logout
               </button>
             </div>

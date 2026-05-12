@@ -302,22 +302,28 @@ export default function Stats() {
       style={{
         maxWidth: 1100,
         margin: "0 auto",
-        padding: "2rem 0",
         color: darkMode ? "#f8fafc" : "#222",
       }}
     >
-      <h1 style={{ marginBottom: 24 }}>Job Application Stats</h1>
+      <div className="page-header">
+        <div>
+          <p className="page-kicker">Analytics</p>
+          <h1 className="page-title">Job Application Stats</h1>
+          <p className="page-subtitle">
+            Understand your pipeline volume, status mix, and movement over time.
+          </p>
+        </div>
+      </div>
       {loading ? (
-        <div>Loading stats...</div>
+        <div className="surface-card">Loading stats...</div>
       ) : (
         <>
           <div
             style={{
-              display: "flex",
-              gap: 32,
-              flexWrap: "wrap",
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+              gap: 16,
               marginBottom: 32,
-              justifyContent: "center", // Center the cards horizontally
             }}
           >
             <StatCard label="Total Applications" value={total} />
@@ -376,12 +382,13 @@ export default function Stats() {
               style={{
                 flex: 1,
                 minWidth: 320,
-                background: darkMode ? "#23263a" : "#e5e7eb",
-                borderRadius: 12,
+                background: "var(--card-bg)",
+                border: "1px solid var(--border-color)",
+                borderRadius: "var(--radius-lg)",
                 padding: 16,
                 cursor: "pointer",
                 transition: "box-shadow 0.2s",
-                boxShadow: "0 1px 6px rgba(0,0,0,0.10)",
+                boxShadow: "var(--card-shadow)",
               }}
               title="Click to expand"
               onClick={() => setModalChart("bar")}
@@ -417,12 +424,13 @@ export default function Stats() {
               style={{
                 flex: 1,
                 minWidth: 320,
-                background: darkMode ? "#23263a" : "#e5e7eb",
-                borderRadius: 12,
+                background: "var(--card-bg)",
+                border: "1px solid var(--border-color)",
+                borderRadius: "var(--radius-lg)",
                 padding: 16,
                 cursor: "pointer",
                 transition: "box-shadow 0.2s",
-                boxShadow: "0 1px 6px rgba(0,0,0,0.10)",
+                boxShadow: "var(--card-shadow)",
               }}
               title="Click to expand"
               onClick={() => setModalChart("pie")}
@@ -460,12 +468,13 @@ export default function Stats() {
               style={{
                 flex: 1,
                 minWidth: 320,
-                background: darkMode ? "#23263a" : "#e5e7eb",
-                borderRadius: 12,
+                background: "var(--card-bg)",
+                border: "1px solid var(--border-color)",
+                borderRadius: "var(--radius-lg)",
                 padding: 16,
                 cursor: "pointer",
                 transition: "box-shadow 0.2s",
-                boxShadow: "0 1px 6px rgba(0,0,0,0.10)",
+                boxShadow: "var(--card-shadow)",
               }}
               title="Click to expand"
               onClick={() => setModalChart("line")}
@@ -502,12 +511,13 @@ export default function Stats() {
               style={{
                 flex: 1,
                 minWidth: 320,
-                background: darkMode ? "#23263a" : "#e5e7eb",
-                borderRadius: 12,
+                background: "var(--card-bg)",
+                border: "1px solid var(--border-color)",
+                borderRadius: "var(--radius-lg)",
                 padding: 16,
                 cursor: "pointer",
                 transition: "box-shadow 0.2s",
-                boxShadow: "0 1px 6px rgba(0,0,0,0.10)",
+                boxShadow: "var(--card-shadow)",
               }}
               title="Click to expand"
               onClick={() => setModalChart("sankey")}
@@ -629,23 +639,19 @@ export default function Stats() {
 function StatCard({ label, value }) {
   return (
     <div
+      className="surface-card"
       style={{
-        background: "var(--card-bg)",
-        borderRadius: 10,
-        boxShadow: "0 2px 8px var(--card-shadow)",
-        padding: "1.2rem 2rem",
-        minWidth: 140,
+        padding: "1rem",
         textAlign: "center",
-        marginBottom: 12,
       }}
     >
       <div style={{ fontSize: 18, fontWeight: 600 }}>{value}</div>
-      <div style={{ color: "#64748b", fontSize: 15 }}>{label}</div>
+      <div style={{ color: "var(--text-muted)", fontSize: 15 }}>{label}</div>
     </div>
   );
 }
 
-function PipelineBar({ pipeline, darkMode }) {
+function PipelineBar({ pipeline }) {
   const colors = ["#3b82f6", "#22c55e", "#facc15", "#ef4444"];
   return (
     <div
@@ -655,8 +661,9 @@ function PipelineBar({ pipeline, darkMode }) {
         height: 40,
         borderRadius: 8,
         overflow: "hidden",
-        boxShadow: "0 1px 6px rgba(0,0,0,0.10)",
-        background: darkMode ? "#23263a" : "#e5e7eb",
+        boxShadow: "var(--card-shadow)",
+        background: "var(--card-bg)",
+        border: "1px solid var(--border-color)",
         marginBottom: 24,
       }}
     >

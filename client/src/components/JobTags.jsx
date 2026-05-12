@@ -1,19 +1,18 @@
 function JobTags({ tags, darkMode }) {
   if (!tags || tags.length === 0) return null;
   return (
-    <div style={{ marginTop: 4 }}>
-      <span style={{ fontWeight: 500 }}>Tags:</span>{" "}
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 10 }}>
       {tags.map((tag) => (
         <span
           key={tag}
           style={{
-            background: darkMode ? "#334155" : "#e0e7ef",
-            color: darkMode ? "#bae6fd" : "#334155",
-            borderRadius: 6,
-            padding: "0.1rem 0.5rem",
-            marginRight: 4,
+            background: darkMode ? "rgba(96, 165, 250, 0.14)" : "var(--accent-soft)",
+            color: darkMode ? "#bfdbfe" : "#1d4ed8",
+            border: "1px solid var(--border-color)",
+            borderRadius: 999,
+            padding: "0.12rem 0.55rem",
             fontSize: "calc(var(--font-size-base) * 0.85)",
-            fontWeight: 500,
+            fontWeight: 700,
             display: "inline-block",
           }}
         >

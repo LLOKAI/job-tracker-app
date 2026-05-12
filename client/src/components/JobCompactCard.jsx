@@ -13,9 +13,10 @@ const JobCompactCard = React.forwardRef(function JobCompactCard(
       onClick={onSelect}
       style={{
         background: "var(--card-bg)",
-        borderRadius: "10px",
-        boxShadow: `0 2px 8px var(--card-shadow)`,
-        padding: "1rem",
+        border: "1px solid var(--border-color)",
+        borderRadius: "var(--radius-lg)",
+        boxShadow: "var(--card-shadow)",
+        padding: "1.05rem",
         display: "flex",
         flexDirection: "row",
         alignItems: "stretch",
@@ -23,7 +24,17 @@ const JobCompactCard = React.forwardRef(function JobCompactCard(
         justifyContent: "space-between",
         gap: "1.5rem",
         cursor: "pointer",
-        transition: "box-shadow 0.2s",
+        transition: "box-shadow 0.18s, transform 0.18s, border-color 0.18s",
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.boxShadow = "var(--card-shadow-hover)";
+        e.currentTarget.style.transform = "translateY(-2px)";
+        e.currentTarget.style.borderColor = "var(--border-strong)";
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.boxShadow = "var(--card-shadow)";
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.borderColor = "var(--border-color)";
       }}
     >
       <div

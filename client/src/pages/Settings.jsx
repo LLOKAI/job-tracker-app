@@ -13,27 +13,27 @@ const tabs = [
   { key: "integrations", label: "Integrations", icon: <MdExtension /> },
 ];
 
-const sidebarStyle = (darkMode) => ({
-  minWidth: 200,
-  borderRight: `1px solid ${darkMode ? "#334155" : "#e5e7eb"}`,
-  background: darkMode ? "#0f172a" : "#f4f6f8",
-  padding: "2rem 1.5rem 2rem 2rem", // Add right padding
+const sidebarStyle = () => ({
+  minWidth: 220,
+  borderRight: "1px solid var(--border-color)",
+  background: "var(--card-bg)",
+  padding: "1.25rem",
   height: "100%",
   display: "flex",
   flexDirection: "column",
   gap: 8,
 });
 
-const tabButtonStyle = (active, darkMode) => ({
+const tabButtonStyle = (active) => ({
   display: "flex",
   alignItems: "center",
   gap: 12,
-  background: active ? (darkMode ? "#334155" : "#e5e7eb") : "transparent",
-  color: active ? (darkMode ? "#fff" : "#222") : (darkMode ? "#cbd5e1" : "#222"),
-  border: "none",
-  borderRadius: 6,
+  background: active ? "var(--accent-soft)" : "transparent",
+  color: active ? "var(--accent)" : "var(--text-color)",
+  border: "1px solid transparent",
+  borderRadius: "var(--radius-md)",
   padding: "0.7rem 1rem",
-  fontWeight: active ? 600 : 500,
+  fontWeight: active ? 800 : 650,
   fontSize: "1rem",
   cursor: "pointer",
   textAlign: "left",
@@ -52,28 +52,28 @@ const labelStyle = {
 };
 
 const descStyle = {
-  color: "#64748b",
+  color: "var(--text-muted)",
   fontSize: "0.97rem",
   marginBottom: 10,
 };
 
-const inputStyle = (darkMode) => ({
+const inputStyle = () => ({
   padding: "0.6rem 0.8rem",
-  borderRadius: "6px",
-  border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
+  borderRadius: "var(--radius-md)",
+  border: "1px solid var(--input-border)",
   fontSize: "1rem",
   fontFamily: "inherit",
-  backgroundColor: darkMode ? "#334155" : "#ffffff",
-  color: darkMode ? "#f8fafc" : "#222222",
+  backgroundColor: "var(--input-bg)",
+  color: "var(--input-text)",
   minWidth: 0,
   marginBottom: 12,
 });
 
 const buttonStyle = () => ({
   padding: "0.7rem 1.2rem",
-  borderRadius: 6,
+  borderRadius: "var(--radius-md)",
   border: "none",
-  background: "#3b82f6",
+  background: "var(--button-bg)",
   color: "#fff",
   fontWeight: 600,
   fontSize: 16,
@@ -525,11 +525,15 @@ export default function Settings() {
     <div style={{
       display: "flex",
       minHeight: "calc(100vh - 72px)",
-      background: darkMode ? "#0f172a" : "#f4f6f8",
+      background: "var(--card-bg)",
+      border: "1px solid var(--border-color)",
+      borderRadius: "var(--radius-xl)",
+      overflow: "hidden",
+      boxShadow: "var(--card-shadow)",
     }}>
       {/* Sidebar */}
       <nav style={sidebarStyle(darkMode)}>
-        <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18, color: darkMode ? "#fff" : "#222" }}>
+        <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 18, color: "var(--text-color)" }}>
           Settings
         </h3>
         {tabs.map(tab => (
@@ -549,7 +553,7 @@ export default function Settings() {
         padding: "2.5rem 3rem",
         maxWidth: 700,
         margin: "0 auto",
-        background: darkMode ? "#0f172a" : "#f4f6f8",
+        background: "var(--card-bg)",
       }}>
         {/* Dynamic Title and Divider */}
         <div style={{ marginBottom: 32 }}>
@@ -557,7 +561,7 @@ export default function Settings() {
             margin: 0,
             fontSize: 28,
             fontWeight: 700,
-            color: darkMode ? "#fff" : "#222",
+            color: "var(--text-color)",
             letterSpacing: 0.2,
             textTransform: "capitalize"
           }}>
@@ -565,7 +569,7 @@ export default function Settings() {
           </h2>
           <div style={{
             height: 1,
-            background: darkMode ? "#334155" : "#e5e7eb",
+            background: "var(--border-color)",
             margin: "16px 0 0 0"
           }} />
         </div>

@@ -6,18 +6,22 @@ export const statusColors = {
 };
 
 export const iconButtonStyle = {
-  background: "none",
-  border: "none",
+  background: "var(--card-bg)",
+  border: "1px solid var(--border-color)",
   cursor: "pointer",
   display: "flex",
   alignItems: "center",
-  padding: 6,
+  justifyContent: "center",
+  width: 38,
+  height: 38,
+  padding: 0,
   borderRadius: 8,
-  transition: "box-shadow 0.15s, background 0.15s",
+  transition: "box-shadow 0.15s, background 0.15s, transform 0.15s",
   boxShadow: "none",
 };
 export const iconButtonHoverStyle = {
   ...iconButtonStyle,
-  boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
-  background: "#e0e7ef",
+  boxShadow: "0 10px 20px rgba(23,32,51,0.12)",
+  background: "var(--accent-soft)",
+  transform: "translateY(-1px)",
 };

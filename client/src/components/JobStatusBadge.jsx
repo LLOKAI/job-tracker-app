@@ -2,19 +2,31 @@ import { statusColors } from "./jobConstants";
 
 function JobStatusBadge({ status }) {
   const color = statusColors[status] || {};
+  const label = {
+    APPLIED: "Applied",
+    INTERVIEW: "Interview",
+    REJECTED: "Rejected",
+    OFFER: "Offer",
+  }[status] || status;
+
   return (
     <span
       style={{
         backgroundColor: color.bg || "gray",
         color: color.text || "#fff",
-        padding: "0.25rem 0.75rem",
-        borderRadius: "12px",
-        fontWeight: "600",
-        fontSize: "calc(var(--font-size-base) * 0.85)",
-        textTransform: "capitalize",
+        display: "inline-flex",
+        alignItems: "center",
+        minHeight: 28,
+        padding: "0.25rem 0.65rem",
+        borderRadius: "999px",
+        fontWeight: "800",
+        fontSize: "calc(var(--font-size-base) * 0.78)",
+        letterSpacing: "0.02em",
+        textTransform: "uppercase",
+        whiteSpace: "nowrap",
       }}
     >
-      {status}
+      {label}
     </span>
   );
 }

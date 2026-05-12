@@ -20,22 +20,21 @@ export default function Sidebar({ collapsed, setCollapsed }) {
     <aside
       style={{
         position: "fixed", // changed from relative
-        top: 72,           // header height in px
+        top: "var(--header-height)",
         left: 0,
-        width: collapsed ? 60 : 180,
-        height: "calc(100vh - 72px)", // full viewport minus header
+        width: collapsed ? "var(--sidebar-collapsed)" : "var(--sidebar-expanded)",
+        height: "calc(100vh - var(--header-height))",
         background: "var(--sidebar-bg)",
         color: "var(--sidebar-text)",
-        padding: collapsed ? "1.5rem 0.5rem" : "1.5rem",
+        padding: collapsed ? "18px 12px" : "20px 16px",
         display: "flex",
         flexDirection: "column",
-        gap: "1.5rem",
+        gap: "18px",
         alignItems: collapsed ? "center" : "stretch",
-        transition: "width 0.2s",
-        zIndex: 101, // above main content, below header
+        transition: "width 180ms ease",
+        zIndex: 250,
         marginTop: 0,
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0
+        borderRight: "1px solid rgba(255,255,255,0.08)",
       }}
     >
       <nav>
@@ -49,26 +48,28 @@ export default function Sidebar({ collapsed, setCollapsed }) {
                   alignItems: "center",
                   gap: collapsed ? 0 : 12,
                   justifyContent: collapsed ? "center" : "flex-start",
-                  padding: collapsed ? "0.6rem" : "0.6rem 1rem",
-                  borderRadius: "4px",
+                  minHeight: 44,
+                  padding: collapsed ? "0.65rem" : "0.65rem 0.8rem",
+                  borderRadius: "8px",
                   backgroundColor:
                     activePath === link.path
                       ? "var(--link-active-bg)"
                       : hovered === link.name
                         ? "var(--link-hover-bg)"
                         : "transparent",
-                  color: "var(--button-text)",
-                  fontWeight: activePath === link.path ? "600" : "400",
+                  color: activePath === link.path ? "#172033" : "var(--sidebar-text)",
+                  fontWeight: activePath === link.path ? "800" : "650",
                   textDecoration: "none",
-                  transition: "background-color 0.3s",
-                  fontSize: 18,
+                  transition: "background-color 150ms ease, color 150ms ease, transform 150ms ease",
+                  fontSize: 16,
+                  boxShadow: activePath === link.path ? "0 12px 24px rgba(0,0,0,0.18)" : "none",
                 }}
                 title={link.name}
                 onMouseEnter={() => setHovered(link.name)}
                 onMouseLeave={() => setHovered(null)}
               >
                 {link.icon}
-                {!collapsed && <span style={{ marginLeft: 10 }}>{link.name}</span>}
+                {!collapsed && <span>{link.name}</span>}
               </Link>
             </li>
           ))}
@@ -80,15 +81,15 @@ export default function Sidebar({ collapsed, setCollapsed }) {
         style={{
           position: "absolute",
           top: 12,
-          right: collapsed ? -18 : -12,
-          background: "var(--sidebar-bg)",
-          border: "none",
-          color: "var(--sidebar-text)",
+          right: collapsed ? -15 : -14,
+          background: "var(--card-bg)",
+          border: "1px solid var(--border-color)",
+          color: "var(--text-color)",
           borderRadius: "50%",
-          width: 28,
-          height: 28,
+          width: 30,
+          height: 30,
           cursor: "pointer",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+          boxShadow: "var(--card-shadow)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -106,7 +107,7 @@ export default function Sidebar({ collapsed, setCollapsed }) {
           textAlign: "center",
           fontSize: 13,
           opacity: 0.8,
-          paddingBottom: "3rem",
+          paddingBottom: "2rem",
         }}
       >
         <a

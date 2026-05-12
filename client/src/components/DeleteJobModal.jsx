@@ -9,6 +9,7 @@ function DeleteJobModal({ open, onCancel, onDelete, deleting }) {
         right: 0,
         bottom: 0,
         background: "rgba(0,0,0,0.35)",
+        backdropFilter: "blur(8px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -17,11 +18,12 @@ function DeleteJobModal({ open, onCancel, onDelete, deleting }) {
     >
       <div
         style={{
-          background: "#23263a",
-          color: "#f8fafc",
+          background: "var(--card-bg)",
+          color: "var(--text-color)",
           padding: "2rem",
-          borderRadius: 12,
-          boxShadow: "0 2px 16px rgba(0,0,0,0.18)",
+          borderRadius: "var(--radius-xl)",
+          border: "1px solid var(--border-color)",
+          boxShadow: "var(--card-shadow-hover)",
           minWidth: 320,
           textAlign: "center",
         }}
@@ -33,31 +35,15 @@ function DeleteJobModal({ open, onCancel, onDelete, deleting }) {
         </p>
         <div style={{ display: "flex", justifyContent: "center", gap: 16 }}>
           <button
+            className="btn btn-secondary"
             onClick={onCancel}
-            style={{
-              padding: "0.5rem 1.2rem",
-              borderRadius: 6,
-              border: "none",
-              background: "#64748b",
-              color: "#fff",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
             disabled={deleting}
           >
             Cancel
           </button>
           <button
+            className="btn btn-danger"
             onClick={onDelete}
-            style={{
-              padding: "0.5rem 1.2rem",
-              borderRadius: 6,
-              border: "none",
-              background: "#ef4444",
-              color: "#fff",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
             disabled={deleting}
           >
             {deleting ? "Deleting..." : "Delete"}

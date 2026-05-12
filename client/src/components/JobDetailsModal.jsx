@@ -3,15 +3,15 @@ import JobStatusBadge from "./JobStatusBadge";
 import JobTags from "./JobTags";
 import JobEditDeleteButtons from "./JobEditDeleteButtons";
 
-function getInputStyle(darkMode) {
+function getInputStyle() {
   return {
     padding: "0.6rem 0.8rem",
-    borderRadius: "6px",
-    border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
+    borderRadius: "var(--radius-md)",
+    border: "1px solid var(--input-border)",
     fontSize: "1rem",
     fontFamily: "inherit",
-    backgroundColor: darkMode ? "#334155" : "#ffffff",
-    color: darkMode ? "#f8fafc" : "#222222",
+    backgroundColor: "var(--input-bg)",
+    color: "var(--input-text)",
     marginBottom: 8,
     width: "100%",
   };
@@ -71,7 +71,8 @@ function JobDetailsModal({
         left: 0,
         right: 0,
         bottom: 0,
-        background: "rgba(0,0,0,0.35)",
+        background: "rgba(0,0,0,0.38)",
+        backdropFilter: "blur(8px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -81,13 +82,14 @@ function JobDetailsModal({
     >
       <div
         style={{
-          background: darkMode ? "#23263a" : "#fff",
-          color: darkMode ? "#f8fafc" : "#222",
-          padding: "2.5rem 3.5rem 2.5rem 2rem",
-          borderRadius: 16,
-          boxShadow: "0 2px 24px rgba(0,0,0,0.22)",
-          minWidth: 340,
-          maxWidth: 420,
+          background: "var(--card-bg)",
+          color: "var(--text-color)",
+          padding: "2rem 3rem 2rem 2rem",
+          borderRadius: "var(--radius-xl)",
+          border: "1px solid var(--border-color)",
+          boxShadow: "var(--card-shadow-hover)",
+          minWidth: 360,
+          maxWidth: 520,
           width: "90vw",
           textAlign: "left",
           position: "relative",
@@ -102,13 +104,13 @@ function JobDetailsModal({
             right: 16,
             background: "transparent",
             border: "none",
-            color: darkMode ? "#f8fafc" : "#222",
+            color: "var(--text-muted)",
             fontSize: 22,
             cursor: "pointer",
           }}
           aria-label="Close"
         >
-          ×
+          X
         </button>
         {/* Modal header: title, edit/delete, status badge */}
         <div
@@ -170,7 +172,7 @@ function JobDetailsModal({
             job.company
           )}
         </div>
-        <div style={{ color: "#64748b", marginBottom: 8 }}>
+        <div style={{ color: "var(--text-muted)", marginBottom: 8 }}>
           <b>Location:</b>{" "}
           {isEditing ? (
             <input
@@ -185,7 +187,7 @@ function JobDetailsModal({
           )}
         </div>
         {job.appliedDate && (
-          <div style={{ color: "#64748b", marginBottom: 8 }}>
+          <div style={{ color: "var(--text-muted)", marginBottom: 8 }}>
             <b>Applied:</b>{" "}
             {isEditing ? (
               <input
@@ -280,34 +282,10 @@ function JobDetailsModal({
         </div>
         {isEditing && (
           <div style={{ display: "flex", gap: 12, marginTop: 18 }}>
-            <button
-              onClick={handleSave}
-              style={{
-                background: "#3b82f6",
-                color: "#fff",
-                border: "none",
-                borderRadius: 6,
-                padding: "0.7rem 1.2rem",
-                fontWeight: 600,
-                fontSize: 16,
-                cursor: "pointer",
-              }}
-            >
+            <button className="btn" onClick={handleSave}>
               Save
             </button>
-            <button
-              onClick={handleCancel}
-              style={{
-                background: "#64748b",
-                color: "#fff",
-                border: "none",
-                borderRadius: 6,
-                padding: "0.7rem 1.2rem",
-                fontWeight: 600,
-                fontSize: 16,
-                cursor: "pointer",
-              }}
-            >
+            <button className="btn btn-secondary" onClick={handleCancel}>
               Cancel
             </button>
           </div>

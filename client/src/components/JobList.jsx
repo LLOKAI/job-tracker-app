@@ -1,19 +1,15 @@
 import React, { useEffect, useState, useContext, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
 import { ThemeContext } from "../contexts";
-import { MdViewModule, MdViewList, MdEdit, MdDelete } from "react-icons/md";
+import { MdClose, MdSearch, MdWorkOutline } from "react-icons/md";
 
 import JobRowCard from "./JobRowCard";
 import JobCompactCard from "./JobCompactCard";
-import JobTags from "./JobTags";
-import JobStatusBadge from "./JobStatusBadge";
-import JobEditDeleteButtons from "./JobEditDeleteButtons";
 import DeleteJobModal from "./DeleteJobModal";
 import JobDetailsModal from "./JobDetailsModal";
 
 const sortOptions = [
-  { value: "date_desc", label: "Date (Newest → Oldest)" },
-  { value: "date_asc", label: "Date (Oldest → Newest)" },
+  { value: "date_desc", label: "Date (Newest to Oldest)" },
+  { value: "date_asc", label: "Date (Oldest to Newest)" },
   { value: "company_asc", label: "Company (A-Z)" },
   { value: "company_desc", label: "Company (Z-A)" },
   { value: "position_asc", label: "Position (A-Z)" },
@@ -33,18 +29,6 @@ const sortToApi = {
   status_desc: "status_desc",
 };
 
-const getSelectStyle = (darkMode) => ({
-  padding: "0.6rem 0.8rem",
-  borderRadius: "6px",
-  border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
-  fontSize: "1rem",
-  fontFamily: "inherit",
-  backgroundColor: darkMode ? "#334155" : "#ffffff",
-  color: darkMode ? "#f8fafc" : "#222222",
-});
-
-// --- Main JobList Component ---
-
 const JobList = ({ compactMode }) => {
   const { darkMode } = useContext(ThemeContext);
   const [jobs, setJobs] = useState([]);
@@ -62,64 +46,70 @@ const JobList = ({ compactMode }) => {
   const [deleteJobId, setDeleteJobId] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
-  const [editingJob, setEditingJob] = useState(null); // NEW
+  const [editingJob, setEditingJob] = useState(null);
 
-  // Infinite scroll state
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef();
 
-  // Reset jobs when sort/search changes
   useEffect(() => {
     setJobs([]);
     setPage(1);
     setHasMore(true);
+    setError(null);
   }, [sort, search]);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchJobs = async () => {
       setLoading(true);
       try {
         const params = new URLSearchParams();
         params.append("sort", sortToApi[sort]);
         params.append("page", page);
-        params.append("limit", 20); // Adjust page size as needed
+        params.append("limit", 20);
         if (search) params.append("q", search);
+
         const res = await fetch(
-          `http://localhost:3000/api/jobs?${params.toString()}`
+          `http://localhost:3000/api/jobs?${params.toString()}`,
+          { signal: controller.signal }
         );
         if (!res.ok) {
           throw new Error(`HTTP error! Status: ${res.status}`);
         }
+
         const data = await res.json();
-        setJobs(prev => page === 1 ? (data.data || []) : [...prev, ...(data.data || [])]);
+        setJobs((prev) => page === 1 ? (data.data || []) : [...prev, ...(data.data || [])]);
         setHasMore(data.data && data.data.length > 0 && page < data.meta.pages);
       } catch (err) {
-        setError(err.message);
+        if (err.name !== "AbortError") {
+          setError(err.message);
+        }
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchJobs();
+    return () => controller.abort();
   }, [sort, search, page]);
 
-  // Infinite scroll observer
   const lastJobRef = useCallback(
-    node => {
+    (node) => {
       if (loading) return;
       if (observer.current) observer.current.disconnect();
-      observer.current = new window.IntersectionObserver(entries => {
+      observer.current = new window.IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          setPage(prev => prev + 1);
+          setPage((prev) => prev + 1);
         }
       });
       if (node) observer.current.observe(node);
     },
     [loading, hasMore]
   );
-
-  const handleSortChange = (e) => setSort(e.target.value);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -138,7 +128,7 @@ const JobList = ({ compactMode }) => {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete job");
-      setJobs((jobs) => jobs.filter((j) => j.id !== id));
+      setJobs((currentJobs) => currentJobs.filter((job) => job.id !== id));
       setDeleteJobId(null);
     } catch {
       alert("Failed to delete job.");
@@ -147,7 +137,6 @@ const JobList = ({ compactMode }) => {
     }
   };
 
-  // --- Add this function for saving edits ---
   const handleSaveJob = async (updatedJob) => {
     try {
       const res = await fetch(`http://localhost:3000/api/jobs/${updatedJob.id}`, {
@@ -157,54 +146,58 @@ const JobList = ({ compactMode }) => {
           ...updatedJob,
           tags: Array.isArray(updatedJob.tags)
             ? updatedJob.tags
-            : (updatedJob.tags || "").split(",").map(t => t.trim()).filter(Boolean),
+            : (updatedJob.tags || "").split(",").map((tag) => tag.trim()).filter(Boolean),
         }),
       });
       if (!res.ok) throw new Error("Failed to update job");
       const savedJob = await res.json();
-      setJobs((prev) =>
-        prev.map((j) => (j.id === savedJob.id ? savedJob : j))
-      );
+      setJobs((prev) => prev.map((job) => (job.id === savedJob.id ? savedJob : job)));
       setEditingJob(null);
-      setSelectedJob(savedJob); // Optionally show updated job
+      setSelectedJob(savedJob);
     } catch {
       alert("Failed to save job changes.");
     }
   };
 
+  const showEmpty = jobs.length === 0 && !loading;
+
   return (
     <div>
-      {/* Header Row */}
       <div
+        className="surface-card joblist-controls-row"
         style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-          marginBottom: "0.3rem",
-          justifyContent: "flex-start",
-          flexWrap: "wrap",
-        }}
-        className="joblist-header-row"
-      >
-        <h2 style={{ fontSize: "var(--font-size-base)", margin: 0 }}>
-          Job Applications
-        </h2>
-      </div>
-      {/* Controls Row */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
           marginBottom: "1rem",
-          flexWrap: "wrap",
+          padding: 16,
+          justifyContent: "space-between",
         }}
-        className="joblist-controls-row"
       >
+        <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 220 }}>
+          <div
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 10,
+              display: "grid",
+              placeItems: "center",
+              background: "var(--accent-soft)",
+              color: "var(--accent)",
+            }}
+          >
+            <MdWorkOutline size={22} />
+          </div>
+          <div>
+            <h2 style={{ fontSize: "1rem", margin: 0 }}>Job Applications</h2>
+            <div style={{ color: "var(--text-muted)", fontSize: "0.86rem" }}>
+              {search ? `Filtered by "${search}"` : "Sorted and searchable"}
+            </div>
+          </div>
+        </div>
+
         <select
           value={sort}
-          onChange={handleSortChange}
-          style={getSelectStyle(darkMode)}
+          onChange={(e) => setSort(e.target.value)}
+          className="select"
+          style={{ maxWidth: 240 }}
         >
           {sortOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -212,96 +205,66 @@ const JobList = ({ compactMode }) => {
             </option>
           ))}
         </select>
+
         <form
           onSubmit={handleSearchSubmit}
-          style={{ display: "flex", alignItems: "center", gap: 4 }}
+          style={{ display: "flex", alignItems: "center", gap: 8, flex: "1 1 300px", maxWidth: 450 }}
         >
-          <input
-            type="text"
-            placeholder="Search jobs..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            style={{
-              ...getSelectStyle(darkMode),
-              width: 250,
-              fontSize: "1rem",
-              borderRadius: 6,
-              border: darkMode ? "1px solid #475569" : "1px solid #cbd5e1",
-            }}
-          />
-          {searchInput && (
-            <button
-              type="button"
-              onClick={handleSearchClear}
+          <div style={{ position: "relative", flex: 1 }}>
+            <MdSearch
               style={{
-                background: "transparent",
-                border: "none",
-                color: darkMode ? "#f8fafc" : "#222",
-                cursor: "pointer",
-                fontSize: "1.2rem",
-                marginLeft: 2,
+                position: "absolute",
+                left: 12,
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: "var(--text-muted)",
+                pointerEvents: "none",
               }}
-              title="Clear"
-            >
-              ×
+            />
+            <input
+              type="text"
+              placeholder="Search company, role, or tag"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="input"
+              style={{ paddingLeft: 38 }}
+            />
+          </div>
+          {searchInput && (
+            <button className="icon-btn" type="button" onClick={handleSearchClear} title="Clear">
+              <MdClose />
             </button>
           )}
-          <button
-            type="submit"
-            style={{
-              background: "var(--button-bg)",
-              color: "var(--button-text)",
-              border: "none",
-              borderRadius: "6px",
-              padding: "0.4rem 0.8rem",
-              fontWeight: 600,
-              fontSize: "1rem",
-              cursor: "pointer",
-              marginLeft: 2,
-            }}
-          >
+          <button className="btn" type="submit">
             Search
           </button>
         </form>
       </div>
-      {/* Main Content */}
+
       {error && (
-        <div style={{ color: "#b91c1c", marginBottom: "1rem" }}>
+        <div className="surface-card" style={{ color: "var(--error-color)", marginBottom: "1rem" }}>
           Error loading jobs: {error}
         </div>
       )}
-      {jobs.length === 0 && !loading ? (
-        <div style={{ margin: "2rem 0", textAlign: "center", color: "#888" }}>
+
+      {showEmpty ? (
+        <div className="empty-state">
           {search ? (
             <>
               No results found.
-              <button
-                type="button"
-                onClick={handleSearchClear}
-                style={{
-                  marginLeft: 12,
-                  background: "var(--button-bg)",
-                  color: "var(--button-text)",
-                  border: "none",
-                  borderRadius: 6,
-                  padding: "0.3rem 0.8rem",
-                  fontWeight: 600,
-                  fontSize: "1rem",
-                  cursor: "pointer",
-                }}
-              >
+              <button className="btn btn-secondary" type="button" onClick={handleSearchClear} style={{ marginLeft: 12 }}>
                 Clear Search
               </button>
             </>
           ) : (
-            "No jobs found."
+            "No jobs found. Add your first opportunity to start building the pipeline."
           )}
         </div>
       ) : compactMode ? (
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
             gap: "1rem",
           }}
         >
@@ -309,12 +272,12 @@ const JobList = ({ compactMode }) => {
             <JobCompactCard
               key={job.id}
               job={job}
-              onSelect={e => {
+              onSelect={(e) => {
                 if (e.target.tagName === "A" || e.target.tagName === "BUTTON") return;
                 setSelectedJob(job);
               }}
               onDelete={setDeleteJobId}
-              onEdit={e => {
+              onEdit={(e) => {
                 e.stopPropagation();
                 setEditingJob(job);
               }}
@@ -323,18 +286,18 @@ const JobList = ({ compactMode }) => {
           ))}
         </div>
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
           {jobs.map((job, idx) => (
             <JobRowCard
               key={job.id}
               job={job}
               darkMode={darkMode}
-              onSelect={e => {
+              onSelect={(e) => {
                 if (e.target.tagName === "A" || e.target.tagName === "BUTTON") return;
                 setSelectedJob(job);
               }}
               onDelete={setDeleteJobId}
-              onEdit={e => {
+              onEdit={(e) => {
                 e.stopPropagation();
                 setEditingJob(job);
               }}
@@ -343,10 +306,13 @@ const JobList = ({ compactMode }) => {
           ))}
         </ul>
       )}
-      {/* Show loading spinner/message at the bottom */}
+
       {loading && (
-        <div style={{ textAlign: "center", margin: "1rem" }}>Loading...</div>
+        <div style={{ textAlign: "center", margin: "1rem", color: "var(--text-muted)" }}>
+          Loading...
+        </div>
       )}
+
       <DeleteJobModal
         open={!!deleteJobId}
         onCancel={() => setDeleteJobId(null)}
@@ -358,15 +324,14 @@ const JobList = ({ compactMode }) => {
         darkMode={darkMode}
         onClose={() => setSelectedJob(null)}
         onDelete={setDeleteJobId}
-        onEdit={() => setEditingJob(selectedJob)} // NEW: open modal in edit mode
       />
       <JobDetailsModal
         job={editingJob}
         darkMode={darkMode}
         onClose={() => setEditingJob(null)}
         onDelete={setDeleteJobId}
-        editable // NEW: open in editable mode
-        onSave={handleSaveJob} // <-- Pass the handler here
+        editable
+        onSave={handleSaveJob}
       />
     </div>
   );

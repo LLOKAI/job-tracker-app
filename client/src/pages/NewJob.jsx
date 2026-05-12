@@ -41,6 +41,8 @@ export default function NewJob() {
     tags: "",
     status: defaultStatus,
     appliedDate: today,
+    followUpDate: "",
+    reminderDone: false,
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -63,6 +65,8 @@ export default function NewJob() {
       ...formData,
       tags: tagsArray,
       appliedDate: formData.appliedDate || today,
+      followUpDate: formData.followUpDate || "",
+      reminderDone: false,
     };
 
     try {
@@ -159,6 +163,14 @@ export default function NewJob() {
           onChange={handleChange}
           style={getInputStyle(darkMode)}
           max={today}
+        />
+        <input
+          type="date"
+          name="followUpDate"
+          value={formData.followUpDate}
+          onChange={handleChange}
+          style={getInputStyle(darkMode)}
+          aria-label="Follow-up date"
         />
         <button className="btn" type="submit" disabled={submitting} style={getButtonStyle(submitting, darkMode)}>
           {submitting ? "Submitting..." : "Submit"}

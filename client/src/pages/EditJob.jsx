@@ -38,6 +38,8 @@ export default function EditJob() {
     tags: "",
     status: "APPLIED",
     appliedDate: "",
+    followUpDate: "",
+    reminderDone: false,
   });
 
   const [loading, setLoading] = useState(true);
@@ -60,6 +62,8 @@ export default function EditJob() {
           tags: Array.isArray(data.tags) ? data.tags.join(", ") : "",
           status: data.status || "APPLIED",
           appliedDate: data.appliedDate ? data.appliedDate.slice(0, 10) : "",
+          followUpDate: data.followUpDate ? data.followUpDate.slice(0, 10) : "",
+          reminderDone: Boolean(data.reminderDone),
         });
       } catch (err) {
         setError(err.message);
@@ -85,6 +89,8 @@ export default function EditJob() {
         tags: formData.tags
           ? formData.tags.split(",").map((tag) => tag.trim()).filter(Boolean)
           : [],
+        followUpDate: formData.followUpDate || "",
+        reminderDone: Boolean(formData.reminderDone),
       };
 
       const res = await fetch(`http://localhost:3000/api/jobs/${id}`, {
@@ -185,6 +191,23 @@ export default function EditJob() {
           style={getInputStyle(darkMode)}
           max={today}
         />
+        <input
+          type="date"
+          name="followUpDate"
+          value={formData.followUpDate}
+          onChange={handleChange}
+          style={getInputStyle(darkMode)}
+          aria-label="Follow-up date"
+        />
+        <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <input
+            type="checkbox"
+            name="reminderDone"
+            checked={formData.reminderDone}
+            onChange={(e) => setFormData((prev) => ({ ...prev, reminderDone: e.target.checked }))}
+          />
+          Mark reminder complete
+        </label>
 
         <button className="btn" type="submit" disabled={submitting} style={getButtonStyle(submitting, darkMode)}>
           {submitting ? "Saving..." : "Save"}

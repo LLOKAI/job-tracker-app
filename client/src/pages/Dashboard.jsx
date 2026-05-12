@@ -1,10 +1,11 @@
 // This file is part of the Job Application Tracker project.
 // It is a simple dashboard page that displays a welcome message.
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import JobList from '../components/JobList';
 import { MdViewModule, MdViewList } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { getReminderLabel, getReminderState } from "../utils/reminders";
 
 export default function Dashboard() {
   const [compactMode, setCompactMode] = useState(() => {
@@ -14,7 +15,30 @@ export default function Dashboard() {
   const [dashboardQuote] = useState(() => localStorage.getItem('settings_dashboardQuote') || '');
   const [dashboardQuoteAuthor] = useState(() => localStorage.getItem('settings_dashboardQuoteAuthor') || '');
   const [showQuote, setShowQuote] = useState(true); // Add this line
+  const [attentionJobs, setAttentionJobs] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchAttentionJobs() {
+      try {
+        const res = await fetch("http://localhost:3000/api/jobs?limit=1000");
+        if (!res.ok) throw new Error("Failed to fetch attention jobs");
+        const data = await res.json();
+        setAttentionJobs(data.data || []);
+      } catch {
+        setAttentionJobs([]);
+      }
+    }
+
+    fetchAttentionJobs();
+  }, []);
+
+  const dueJobs = useMemo(() => {
+    return attentionJobs
+      .filter((job) => ["overdue", "today"].includes(getReminderState(job)))
+      .sort((a, b) => new Date(a.followUpDate) - new Date(b.followUpDate))
+      .slice(0, 4);
+  }, [attentionJobs]);
 
   // Save compact mode to localStorage when changed
   const handleCompactToggle = (mode) => {
@@ -94,6 +118,55 @@ export default function Dashboard() {
               — {dashboardQuoteAuthor}
             </div>
           )}
+        </div>
+      )}
+      {dueJobs.length > 0 && (
+        <div className="surface-card" style={{ marginBottom: "1rem", padding: 18 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center", marginBottom: 12 }}>
+            <div>
+              <h2 style={{ margin: 0, fontSize: "1rem" }}>Needs attention</h2>
+              <div style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>
+                Follow-ups due today or already overdue.
+              </div>
+            </div>
+            <Link className="btn btn-secondary" to="/reminders">View reminders</Link>
+          </div>
+          <div style={{ display: "grid", gap: 8 }}>
+            {dueJobs.map((job) => {
+              const state = getReminderState(job);
+              return (
+                <Link
+                  key={job.id}
+                  to={`/jobs/${job.id}/edit`}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    alignItems: "center",
+                    padding: "0.75rem 0.85rem",
+                    border: "1px solid var(--border-color)",
+                    borderRadius: "var(--radius-md)",
+                    textDecoration: "none",
+                    color: "inherit",
+                  }}
+                >
+                  <span>
+                    <b>{job.position}</b>{" "}
+                    <span className="muted">@ {job.company}</span>
+                  </span>
+                  <span
+                    style={{
+                      color: state === "overdue" ? "var(--danger)" : "var(--warning)",
+                      fontWeight: 800,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {getReminderLabel(job)}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       )}
       <JobList compactMode={compactMode} />

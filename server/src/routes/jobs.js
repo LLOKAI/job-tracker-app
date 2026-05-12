@@ -17,7 +17,12 @@ const jobSchema = z.object({
   url: z.preprocess(
     (value) => value === '' ? undefined : value,
     z.string().url().optional()
-  )
+  ),
+  followUpDate: z.preprocess(
+    (value) => value === '' ? undefined : value,
+    z.string().optional()
+  ),
+  reminderDone: z.boolean().optional()
 });
 
 
@@ -112,7 +117,9 @@ router.post('/', async (req, res) => {
         location: data.location,
         tags: data.tags || [],
         notes: data.notes,
-        url: data.url
+        url: data.url,
+        followUpDate: data.followUpDate ? new Date(data.followUpDate) : null,
+        reminderDone: data.reminderDone || false
       }
     });
 
@@ -140,12 +147,14 @@ router.put('/:id', async (req, res) => {
     const data = parse.data;
 
     // If status changed, record transition
-    if (existing.status !== data.status) {
+    const nextStatus = data.status || 'APPLIED';
+
+    if (existing.status !== nextStatus) {
       await prisma.jobStatusTransition.create({
         data: {
           jobId: id,
           from: existing.status,
-          to: data.status,
+          to: nextStatus,
         }
       });
     }
@@ -155,12 +164,14 @@ router.put('/:id', async (req, res) => {
       data: {
         company: data.company,
         position: data.position,
-        status: data.status || 'APPLIED',
+        status: nextStatus,
         appliedDate: data.appliedDate ? new Date(data.appliedDate) : new Date(),
         location: data.location,
         tags: data.tags || [],
         notes: data.notes,
-        url: data.url
+        url: data.url,
+        followUpDate: data.followUpDate ? new Date(data.followUpDate) : null,
+        reminderDone: data.reminderDone || false
       }
     });
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import JobStatusBadge from "./JobStatusBadge";
 import JobTags from "./JobTags";
 import JobEditDeleteButtons from "./JobEditDeleteButtons";
+import { getReminderLabel, getReminderState, toDateInputValue } from "../utils/reminders";
 
 function getInputStyle() {
   return {
@@ -34,6 +35,8 @@ function JobDetailsModal({
   }, [job, editable]);
 
   if (!job) return null;
+  const reminderState = getReminderState(job);
+  const reminderLabel = getReminderLabel(job);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,6 +50,13 @@ function JobDetailsModal({
     setFormData((prev) => ({
       ...prev,
       tags: e.target.value.split(",").map((t) => t.trim()).filter(Boolean),
+    }));
+  };
+
+  const handleReminderDoneChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      reminderDone: e.target.checked,
     }));
   };
 
@@ -254,6 +264,44 @@ function JobDetailsModal({
           )}
         </div>
         <div style={{ marginBottom: 8 }}>
+          <b>Follow-up:</b>{" "}
+          {isEditing ? (
+            <div style={{ display: "grid", gap: 8 }}>
+              <input
+                type="date"
+                name="followUpDate"
+                value={toDateInputValue(formData.followUpDate)}
+                onChange={handleChange}
+                style={getInputStyle(darkMode)}
+              />
+              <label style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--text-muted)" }}>
+                <input
+                  type="checkbox"
+                  checked={Boolean(formData.reminderDone)}
+                  onChange={handleReminderDoneChange}
+                />
+                Mark reminder complete
+              </label>
+            </div>
+          ) : reminderLabel ? (
+            <span
+              style={{
+                color:
+                  reminderState === "overdue"
+                    ? "var(--danger)"
+                    : reminderState === "today"
+                      ? "var(--warning)"
+                      : "var(--text-muted)",
+                fontWeight: reminderState === "done" ? 500 : 800,
+              }}
+            >
+              {reminderLabel}
+            </span>
+          ) : (
+            <span style={{ color: "var(--text-muted)" }}>None</span>
+          )}
+        </div>
+        <div style={{ marginBottom: 8 }}>
           <b>Job Posting:</b>{" "}
           {isEditing ? (
             <input
@@ -277,7 +325,7 @@ function JobDetailsModal({
               Job Posting
             </a>
           ) : (
-            <span style={{ color: "#888" }}>N/A</span>
+            <span style={{ color: "var(--text-muted)" }}>N/A</span>
           )}
         </div>
         {isEditing && (

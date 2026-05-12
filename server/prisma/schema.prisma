@@ -24,6 +24,8 @@ model JobApplication {
   tags         String[]
   notes        String?
   url          String?
+  followUpDate DateTime?
+  reminderDone Boolean               @default(false)
   createdAt    DateTime              @default(now())
   statusTransitions JobStatusTransition[]
 }

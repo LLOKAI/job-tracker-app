@@ -6,6 +6,7 @@ import JobRowCard from "./JobRowCard";
 import JobCompactCard from "./JobCompactCard";
 import DeleteJobModal from "./DeleteJobModal";
 import JobDetailsModal from "./JobDetailsModal";
+import { buildJobPayload } from "../utils/reminders";
 
 const sortOptions = [
   { value: "date_desc", label: "Date (Newest to Oldest)" },
@@ -41,6 +42,7 @@ const JobList = ({ compactMode }) => {
     if (stored === "status") return "status_asc";
     return stored || "date_desc";
   });
+  const [statusFilter, setStatusFilter] = useState("");
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [deleteJobId, setDeleteJobId] = useState(null);
@@ -57,7 +59,7 @@ const JobList = ({ compactMode }) => {
     setPage(1);
     setHasMore(true);
     setError(null);
-  }, [sort, search]);
+  }, [sort, statusFilter, search]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -70,6 +72,7 @@ const JobList = ({ compactMode }) => {
         params.append("page", page);
         params.append("limit", 20);
         if (search) params.append("q", search);
+        if (statusFilter) params.append("status", statusFilter);
 
         const res = await fetch(
           `http://localhost:3000/api/jobs?${params.toString()}`,
@@ -95,7 +98,7 @@ const JobList = ({ compactMode }) => {
 
     fetchJobs();
     return () => controller.abort();
-  }, [sort, search, page]);
+  }, [sort, statusFilter, search, page]);
 
   const lastJobRef = useCallback(
     (node) => {
@@ -142,12 +145,7 @@ const JobList = ({ compactMode }) => {
       const res = await fetch(`http://localhost:3000/api/jobs/${updatedJob.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...updatedJob,
-          tags: Array.isArray(updatedJob.tags)
-            ? updatedJob.tags
-            : (updatedJob.tags || "").split(",").map((tag) => tag.trim()).filter(Boolean),
-        }),
+        body: JSON.stringify(buildJobPayload(updatedJob)),
       });
       if (!res.ok) throw new Error("Failed to update job");
       const savedJob = await res.json();
@@ -204,6 +202,20 @@ const JobList = ({ compactMode }) => {
               {opt.label}
             </option>
           ))}
+        </select>
+
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="select"
+          style={{ maxWidth: 180 }}
+          aria-label="Filter by status"
+        >
+          <option value="">All statuses</option>
+          <option value="APPLIED">Applied</option>
+          <option value="INTERVIEW">Interview</option>
+          <option value="REJECTED">Rejected</option>
+          <option value="OFFER">Offer</option>
         </select>
 
         <form

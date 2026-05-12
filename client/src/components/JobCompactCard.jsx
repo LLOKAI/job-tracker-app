@@ -1,11 +1,15 @@
 import React from "react";
 import JobStatusBadge from "./JobStatusBadge";
 import JobEditDeleteButtons from "./JobEditDeleteButtons";
+import { getReminderLabel, getReminderState } from "../utils/reminders";
 
 const JobCompactCard = React.forwardRef(function JobCompactCard(
   { job, onSelect, onDelete, onEdit }, // add onEdit
   ref
 ) {
+  const reminderState = getReminderState(job);
+  const reminderLabel = getReminderLabel(job);
+
   return (
     <div
       key={job.id}
@@ -66,6 +70,24 @@ const JobCompactCard = React.forwardRef(function JobCompactCard(
           {job.company}
         </div>
         <JobStatusBadge status={job.status} />
+        {reminderLabel && (
+          <div
+            style={{
+              marginTop: 8,
+              color:
+                reminderState === "overdue"
+                  ? "var(--danger)"
+                  : reminderState === "today"
+                    ? "var(--warning)"
+                    : "var(--text-muted)",
+              fontSize: "0.82rem",
+              fontWeight: 800,
+              textAlign: "center",
+            }}
+          >
+            {reminderState === "done" ? "Reminder done" : reminderLabel}
+          </div>
+        )}
       </div>
       <div
         style={{

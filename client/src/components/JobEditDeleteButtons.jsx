@@ -1,7 +1,7 @@
 import { MdEdit, MdDelete } from "react-icons/md";
 import { iconButtonStyle, iconButtonHoverStyle } from "./jobConstants";
 
-function JobEditDeleteButtons({ jobId, onDelete, onEdit, colorEdit = "var(--button-bg)", colorDelete = "#ef4444", fontSize = 24 }) {
+function JobEditDeleteButtons({ onDelete, onEdit, colorEdit = "var(--button-bg)", colorDelete = "#ef4444", fontSize = 24 }) {
   return (
     <>
       <button

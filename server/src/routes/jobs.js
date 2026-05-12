@@ -14,7 +14,10 @@ const jobSchema = z.object({
   location: z.string().min(1),
   tags: z.array(z.string()).optional(),
   notes: z.string().optional(),
-  url: z.string().url().optional()
+  url: z.preprocess(
+    (value) => value === '' ? undefined : value,
+    z.string().url().optional()
+  )
 });
 
 

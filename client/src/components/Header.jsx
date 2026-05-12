@@ -1,6 +1,5 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
-import { ThemeContext } from '../ThemeContext';
-import { UserContext } from '../UserContext';
+import { ThemeContext, UserContext } from '../contexts';
 import Logo from './Logo';
 import { MdOutlineDarkMode, MdOutlineLightMode, MdKeyboardArrowDown } from "react-icons/md";
 

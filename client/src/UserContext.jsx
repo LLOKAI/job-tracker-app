@@ -1,6 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
-
-export const UserContext = createContext();
+import React, { useState, useEffect } from 'react';
+import { UserContext } from './contexts';
 
 export function UserProvider({ children }) {
   const [name, setName] = useState(() => localStorage.getItem('settings_name') || 'Liam');

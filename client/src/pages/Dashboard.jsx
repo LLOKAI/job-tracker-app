@@ -12,8 +12,8 @@ export default function Dashboard() {
     const stored = localStorage.getItem('settings_compactMode');
     return stored ? JSON.parse(stored) : false;
   });
-  const [dashboardQuote, setDashboardQuote] = useState(() => localStorage.getItem('settings_dashboardQuote') || '');
-  const [dashboardQuoteAuthor, setDashboardQuoteAuthor] = useState(() => localStorage.getItem('settings_dashboardQuoteAuthor') || '');
+  const [dashboardQuote] = useState(() => localStorage.getItem('settings_dashboardQuote') || '');
+  const [dashboardQuoteAuthor] = useState(() => localStorage.getItem('settings_dashboardQuoteAuthor') || '');
   const [showQuote, setShowQuote] = useState(true); // Add this line
   const navigate = useNavigate();
 

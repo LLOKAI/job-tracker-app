@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { ThemeContext } from '../ThemeContext';
-import { UserContext } from '../UserContext';
+import { ThemeContext, UserContext } from '../contexts';
 import { MdPerson, MdTune, MdNotifications, MdPalette, MdExtension, MdViewModule, MdViewList, MdDarkMode, MdLightMode, MdNotificationsActive, MdNotificationsNone, MdSecurity, MdBackup, MdBrush } from "react-icons/md";
 
 const tabs = [
@@ -70,7 +69,7 @@ const inputStyle = (darkMode) => ({
   marginBottom: 12,
 });
 
-const buttonStyle = (darkMode) => ({
+const buttonStyle = () => ({
   padding: "0.7rem 1.2rem",
   borderRadius: 6,
   border: "none",

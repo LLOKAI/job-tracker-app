@@ -1,10 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import Header from './Header';
-import { ThemeContext } from '../ThemeContext';
 import Sidebar from './Sidebar';
 
 export default function Layout({ children }) {
-  const { darkMode } = useContext(ThemeContext);
   const [collapsed, setCollapsed] = useState(false);
 
   const sidebarWidth = collapsed ? 80 : 220;

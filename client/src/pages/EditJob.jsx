@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ThemeContext } from "../ThemeContext";
+import { ThemeContext } from "../contexts";
 
 const getFormContainerStyle = (darkMode) => ({
   background: darkMode ? "#1e293b" : "#ffffff",
@@ -44,7 +44,9 @@ export default function EditJob() {
     location: "",
     url: "",
     notes: "",
+    tags: "",
     status: "APPLIED",
+    appliedDate: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -64,7 +66,9 @@ export default function EditJob() {
           location: data.location || "",
           url: data.url || "",
           notes: data.notes || "",
+          tags: Array.isArray(data.tags) ? data.tags.join(", ") : "",
           status: data.status || "APPLIED",
+          appliedDate: data.appliedDate ? data.appliedDate.slice(0, 10) : "",
         });
       } catch (err) {
         setError(err.message);
@@ -85,10 +89,17 @@ export default function EditJob() {
     setSubmitError("");
 
     try {
+      const payload = {
+        ...formData,
+        tags: formData.tags
+          ? formData.tags.split(",").map((tag) => tag.trim()).filter(Boolean)
+          : [],
+      };
+
       const res = await fetch(`http://localhost:3000/api/jobs/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("Failed to update job");
       navigate("/dashboard");
@@ -102,6 +113,8 @@ export default function EditJob() {
 
   if (loading) return <div>Loading job data...</div>;
   if (error) return <div style={{ color: darkMode ? "#f87171" : "#b91c1c" }}>Error: {error}</div>;
+
+  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div style={getFormContainerStyle(darkMode)}>
@@ -147,6 +160,13 @@ export default function EditJob() {
           rows={4}
           style={{ ...getInputStyle(darkMode), resize: "vertical" }}
         />
+        <input
+          name="tags"
+          placeholder="Tags (comma separated)"
+          value={formData.tags}
+          onChange={handleChange}
+          style={getInputStyle(darkMode)}
+        />
         <select
           name="status"
           value={formData.status}
@@ -159,6 +179,14 @@ export default function EditJob() {
           <option value="REJECTED">Rejected</option>
           <option value="OFFER">Offer</option>
         </select>
+        <input
+          type="date"
+          name="appliedDate"
+          value={formData.appliedDate}
+          onChange={handleChange}
+          style={getInputStyle(darkMode)}
+          max={today}
+        />
 
         <button type="submit" disabled={submitting} style={getButtonStyle(submitting, darkMode)}>
           {submitting ? "Saving..." : "Save"}

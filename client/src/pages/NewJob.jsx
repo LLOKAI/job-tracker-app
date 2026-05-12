@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { ThemeContext } from "../ThemeContext";
+import { ThemeContext } from "../contexts";
 
 const getFormContainerStyle = (darkMode) => ({
   background: darkMode ? "#1e293b" : "#ffffff",

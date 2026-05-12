@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { ThemeContext } from "../ThemeContext";
+import { ThemeContext } from "../contexts";
 import { MdViewModule, MdViewList, MdEdit, MdDelete } from "react-icons/md";
 
 import JobRowCard from "./JobRowCard";
@@ -140,7 +140,7 @@ const JobList = ({ compactMode }) => {
       if (!res.ok) throw new Error("Failed to delete job");
       setJobs((jobs) => jobs.filter((j) => j.id !== id));
       setDeleteJobId(null);
-    } catch (err) {
+    } catch {
       alert("Failed to delete job.");
     } finally {
       setDeleting(false);
@@ -167,7 +167,7 @@ const JobList = ({ compactMode }) => {
       );
       setEditingJob(null);
       setSelectedJob(savedJob); // Optionally show updated job
-    } catch (err) {
+    } catch {
       alert("Failed to save job changes.");
     }
   };

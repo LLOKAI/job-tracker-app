@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { ThemeContext } from "../ThemeContext";
+import { ThemeContext } from "../contexts";
 import {
   BarChart,
   Bar,
@@ -41,7 +41,7 @@ export default function Stats() {
         const res = await fetch("http://localhost:3000/api/jobs?limit=1000");
         const data = await res.json();
         setJobs(data.data || []);
-      } catch (err) {
+      } catch {
         setJobs([]);
       } finally {
         setLoading(false);
@@ -180,7 +180,7 @@ export default function Stats() {
             <Tooltip />
             <Legend />
             <Bar dataKey="count">
-              {chartData.map((entry, i) => (
+              {chartData.map((entry) => (
                 <Cell key={entry.status} fill={entry.color} />
               ))}
             </Bar>
@@ -202,9 +202,9 @@ export default function Stats() {
               outerRadius={150}
               label
             >
-              {pieData.map((entry, i) => (
-                <Cell key={entry.name} fill={entry.color} />
-              ))}
+                {pieData.map((entry) => (
+                  <Cell key={entry.name} fill={entry.color} />
+                ))}
             </Pie>
           </PieChart>
         </ResponsiveContainer>
@@ -405,7 +405,7 @@ export default function Stats() {
                   <YAxis stroke={darkMode ? "#f8fafc" : "#222"} allowDecimals={false} />
                   <Tooltip />
                   <Bar dataKey="count">
-                    {chartData.map((entry, i) => (
+                    {chartData.map((entry) => (
                       <Cell key={entry.status} fill={entry.color} />
                     ))}
                   </Bar>
@@ -448,7 +448,7 @@ export default function Stats() {
                     outerRadius={80}
                     label
                   >
-                    {pieData.map((entry, i) => (
+                    {pieData.map((entry) => (
                       <Cell key={entry.name} fill={entry.color} />
                     ))}
                   </Pie>
@@ -646,7 +646,6 @@ function StatCard({ label, value }) {
 }
 
 function PipelineBar({ pipeline, darkMode }) {
-  const total = pipeline.reduce((sum, s) => sum + s.count, 0) || 1;
   const colors = ["#3b82f6", "#22c55e", "#facc15", "#ef4444"];
   return (
     <div

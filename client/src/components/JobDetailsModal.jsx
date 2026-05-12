@@ -2,12 +2,6 @@ import React, { useState, useEffect } from "react";
 import JobStatusBadge from "./JobStatusBadge";
 import JobTags from "./JobTags";
 import JobEditDeleteButtons from "./JobEditDeleteButtons";
-import { MdEdit, MdDelete } from "react-icons/md";
-import {
-  statusColors,
-  iconButtonStyle,
-  iconButtonHoverStyle,
-} from "./jobConstants";
 
 function getInputStyle(darkMode) {
   return {
@@ -28,7 +22,6 @@ function JobDetailsModal({
   darkMode,
   onClose,
   onDelete,
-  onEdit,
   editable = false,
   onSave,
 }) {
